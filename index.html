@@ -1,0 +1,3827 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>송쌤과학 가상실험실 | 물의 전기분해</title>
+<meta name="description" content="송쌤과학 가상실험실 | 물에 전류를 흘려 수소와 산소로 분해하고, 부피비 2:1과 질량비 1:8을 직접 재어 봅니다.">
+<meta name="theme-color" content="#0B1A22">
+<!--
+  ICON_BRIEF — 주제: 물의 전기분해 / 상징: 눈금관 2개 (수소가 산소의 2배 높이)
+  요소 3개(막대2 + 받침선1) · 문자 없음 · 16px에서 높이 차이로 식별
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20x='13'%20y='7'%20width='17'%20height='49'%20rx='7'%20fill='%237FD8EC'/%3E%3Crect%20x='35'%20y='31'%20width='17'%20height='25'%20rx='7'%20fill='%23E8672E'/%3E%3Cpath%20d='M7%2059h50'%20stroke='%238FB6C6'%20stroke-width='6'%20stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+/* ==================== 토큰 ==================== */
+:root{
+  /* 주제 팔레트 — 유래: 붕규산 유리 · 백금 전극 · 기체 확인 불꽃 */
+  --glass:#8FB6C6;   /* 유리관 두께에서 비치는 청록빛 모서리 */
+  --soln:#0D2634;    /* 수산화 나트륨 수용액이 담긴 관 안쪽 깊이색 */
+  --h2:#7FD8EC;      /* 수소가 탈 때의 옅은 청백색 불꽃 */
+  --o2:#E8672E;      /* 되살아난 향불의 붉은 불씨 */
+  --pt:#CBD5DC;      /* 백금 전극 표면의 차가운 금속 광택 */
+  --cu:#B8763C;      /* 전원 장치에서 나온 구리 전선 */
+  /* 브랜드 앵커 — 로고·워터마크·최종 저장에만 */
+  --brand-pink:#FFB7B2; --brand-blue:#0F6FB8;
+
+  /* 간격 */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+  /* 반지름 — 4종 */
+  --r-s:6px; --r-m:10px; --r-l:16px; --r-pill:999px;
+  /* 그림자 — 3종 */
+  --sh-1:0 1px 2px rgba(0,0,0,.30);
+  --sh-2:0 10px 24px -8px rgba(0,0,0,.55);
+  --sh-3:0 24px 60px -12px rgba(0,0,0,.70);
+  /* 글자 */
+  --f-head:'Jua',system-ui,sans-serif;          /* 큰 제목 — 활기 */
+  --f-head2:'Gowun Dodum',system-ui,sans-serif; /* 차분해야 할 제목 — 정제 */
+  --f-body:Pretendard,system-ui,-apple-system,sans-serif;
+  --f-num:'JetBrains Mono',ui-monospace,monospace;
+  --fs-title:26px; --fs-sec:19px; --fs-body:15px; --fs-label:13px; --fs-num:28px;
+  /* 레이아웃 높이 */
+  --h-header:60px; --h-steps:44px; --h-ctrl:68px; --w-side:384px; --w-drawer:420px;
+  /* 모션 */
+  --t-in:.4s; --t-sw:.25s; --ease:cubic-bezier(.22,.61,.36,1);
+}
+/* --h2·--o2 는 캔버스 그래픽용이고, 글자에는 대비를 맞춘 --h2-tx·--o2-tx 를 쓴다 */
+html[data-theme="dark"]{
+  --bg:#0B1A22; --surf:#122530; --surf-2:#17303D; --surf-3:#1D3B4B;
+  --line:#25404E; --line-2:#32505F;
+  --txt:#E8EFF3; --txt-2:#93AAB6; --txt-3:#7E98A5;
+  --h2-tx:#7FD8EC; --o2-tx:#FF9B72;
+  --tint:rgba(127,216,236,.12); --tint-o:rgba(232,103,46,.13); --tint-warn:rgba(240,178,74,.12);
+  --ok:#4FC7A1; --bad:#F08A82; --warn:#F0B24A; --canvas-bg:#081319;
+}
+html[data-theme="light"]{
+  --bg:#EDF1F3; --surf:#FFFFFF; --surf-2:#F5F9FB; --surf-3:#E9F0F4;
+  --line:#D6E1E7; --line-2:#BDCDD6;
+  --txt:#0F1D24; --txt-2:#54666F; --txt-3:#5F7681;
+  --h2-tx:#0F6076; --o2-tx:#A83E17;
+  --tint:rgba(21,116,140,.10); --tint-o:rgba(180,66,20,.10); --tint-warn:rgba(148,104,10,.12);
+  --ok:#0E7A5D; --bad:#A8342E; --warn:#8A6410; --canvas-bg:#0C1A22;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100dvh;max-height:100dvh;overflow:hidden;overscroll-behavior:none}
+body{
+  background:var(--bg); color:var(--txt); font-family:var(--f-body);
+  font-size:var(--fs-body); line-height:1.55; -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+button[disabled]{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--h2);outline-offset:2px;border-radius:var(--r-s)}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.u{font-size:.5em;font-weight:500;color:var(--txt-2);margin-left:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ==================== 골격 ==================== */
+#app{
+  position:fixed; inset:0; display:grid;
+  grid-template-rows:var(--h-header) var(--h-steps) 1fr var(--h-ctrl);
+  overflow:hidden;
+}
+
+/* ---- 헤더 ---- */
+#hd{display:flex;align-items:center;gap:var(--s3);padding:0 var(--s4);
+    border-bottom:1px solid var(--line);background:var(--surf)}
+.logo{display:flex;align-items:center;gap:var(--s2);flex-shrink:0;
+  font-family:var(--f-head);font-size:14px;letter-spacing:-.01em;
+  background:linear-gradient(135deg,var(--brand-blue),#0A4E82);
+  color:#fff;padding:5px 12px 5px 9px;border-radius:var(--r-pill)}
+.logo i{width:7px;height:7px;border-radius:50%;background:var(--brand-pink);display:block;flex:none}
+/* 주아·고운돋움은 굵기가 400 하나뿐이라, 제목 태그의 기본 볼드를 풀어 가짜 볼드를 막는다 */
+#hd h1,.side h2,.quiz .qq,.modal .mh h3,.drawer .dt h3,.ccard h4{font-weight:400}
+#hd h1{font-family:var(--f-head);font-size:var(--fs-sec);letter-spacing:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hd h1 small{font-size:13px;color:var(--txt-3);margin-left:var(--s2);font-family:var(--f-body)}
+.hd-r{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
+.chip{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);
+  border:1px solid var(--line-2);border-radius:var(--r-pill);
+  font-size:var(--fs-label);color:var(--txt-2);white-space:nowrap;
+  transition:border-color var(--t-sw) var(--ease),color var(--t-sw) var(--ease)}
+.chip:hover{border-color:var(--h2);color:var(--txt)}
+.chip b{color:var(--txt);font-weight:600}
+.chip .pen{font-size:11px;color:var(--txt-3)}
+.ico{width:38px;height:38px;display:grid;place-items:center;border-radius:var(--r-s);
+  color:var(--txt-2);transition:background var(--t-sw) var(--ease),color var(--t-sw) var(--ease)}
+.ico:hover{background:var(--surf-3);color:var(--txt)}
+.ico svg{width:18px;height:18px}
+.ico.on{color:var(--h2-tx)}
+/* 헤더 SNS — 평소엔 다른 아이콘과 같은 톤, 손을 대면 브랜드 색이 살아난다 */
+.hd-div{width:1px;height:20px;background:var(--line-2);flex:none;margin:0 2px}
+a.ico{text-decoration:none}
+.hd-r .sns-yt:hover{color:#FF0000;background:rgba(255,0,0,.10)}
+.hd-r .sns-ig:hover{color:#DD2A7B;background:rgba(221,42,123,.10)}
+.tbtn{display:flex;align-items:center;gap:6px;height:38px;padding:0 var(--s3);
+  border:1px solid var(--line-2);border-radius:var(--r-pill);font-size:var(--fs-label);
+  color:var(--txt-2);white-space:nowrap;transition:border-color var(--t-sw) var(--ease),color var(--t-sw) var(--ease)}
+.tbtn:hover{border-color:var(--h2);color:var(--txt)}
+.tbtn.pulse{animation:pls 2.4s var(--ease) 3}
+@keyframes pls{0%,100%{box-shadow:0 0 0 0 rgba(127,216,236,0)}50%{box-shadow:0 0 0 5px rgba(127,216,236,.18)}}
+
+/* ---- 스텝바 ---- */
+/* color-mix 를 모르는 구형 브라우저(학교 기기)에서는 앞의 단색이 그대로 남는다 */
+#steps{display:flex;align-items:center;gap:var(--s1);padding:0 var(--s4);
+  border-bottom:1px solid var(--line);overflow:hidden;background:var(--surf-2)}
+#steps{background:linear-gradient(180deg,var(--surf-2),color-mix(in srgb,var(--surf-2) 82%,var(--bg)))}
+.step{display:flex;align-items:center;gap:var(--s2);height:100%;padding:0 var(--s3);
+  font-size:var(--fs-label);color:var(--txt-3);white-space:nowrap;
+  transition:background var(--t-sw) var(--ease),color var(--t-sw) var(--ease);
+  box-shadow:inset 0 -2px 0 transparent}
+.step n{font-family:var(--f-num);font-size:11px;font-weight:600;width:17px;height:17px;
+  display:grid;place-items:center;border-radius:50%;border:1px solid currentColor;flex:none}
+.step[data-done="1"]{color:var(--ok)}
+.step[data-done="1"] n{background:var(--ok);border-color:var(--ok);color:var(--canvas-bg)}
+.step[aria-current="step"]{color:var(--txt);
+  background:linear-gradient(180deg,transparent,var(--tint));
+  box-shadow:inset 0 -2px 0 var(--h2)}
+.step[aria-current="step"] n{border-color:var(--h2-tx);color:var(--h2-tx);
+  box-shadow:0 0 12px -2px var(--h2)}
+.step:hover:not([aria-current="step"]){color:var(--txt-2);background:rgba(127,216,236,.05)}
+.step[disabled]{opacity:.42}
+#steps .spacer{margin-left:auto}
+.mini{font-size:12px;color:var(--txt-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- 스테이지 ---- */
+#stage{position:relative;overflow:hidden;min-height:0}
+.view{position:absolute;inset:0;display:none;min-height:0;
+  grid-template-columns:minmax(0,1fr) var(--w-side);gap:var(--s4);padding:var(--s4)}
+.view.on{display:grid;animation:vin var(--t-in) var(--ease)}
+@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.view.solo{grid-template-columns:minmax(0,1fr)}
+
+/* 캔버스 무대 — 열린 레이아웃, 카드로 감싸지 않는다.
+   실험실 공기를 만드는 빛은 캔버스가 아니라 여기서 깐다 (매 프레임 다시 그리지 않아도 된다) */
+.cv-wrap{position:relative;min-width:0;min-height:0;border-radius:var(--r-l);
+  overflow:hidden;isolation:isolate;
+  background:
+    radial-gradient(128% 96% at 50% -12%, rgba(127,216,236,.075), transparent 56%),
+    radial-gradient(86% 64% at 50% 114%, rgba(0,0,0,.55), transparent 74%),
+    var(--canvas-bg)}
+.cv-wrap canvas{display:block;width:100%;height:100%;touch-action:none;position:relative;z-index:0}
+/* 안쪽 테두리 한 겹과 아래쪽 어둠 — 무대가 상자 안에 들어앉은 느낌을 준다 */
+.cv-wrap::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.055),
+             inset 0 -70px 90px -70px rgba(0,0,0,.65),
+             inset 0 60px 80px -70px rgba(127,216,236,.12)}
+.cv-badge{position:absolute;top:var(--s3);left:var(--s4);z-index:2;display:flex;align-items:center;gap:var(--s2);
+  font-size:12px;letter-spacing:.05em;color:#8AA5B4;font-family:var(--f-num);pointer-events:none}
+.cv-badge s{width:6px;height:6px;border-radius:50%;background:var(--txt-3);text-decoration:none;
+  transition:background var(--t-sw) var(--ease)}
+.cv-badge s.live{background:var(--h2);animation:bl 1.6s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.35}}
+.cv-note{position:absolute;left:var(--s4);bottom:var(--s3);right:82px;z-index:2;
+  font-size:12px;color:#7B93A1;pointer-events:none}
+
+/* ---- 사이드 패널 ---- */
+.side{display:flex;flex-direction:column;min-height:0;gap:var(--s3);position:relative;
+  background:linear-gradient(180deg,var(--surf-2) 0,var(--surf) 120px);
+  border:1px solid var(--line);border-radius:var(--r-l);padding:var(--s4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.side h2{font-family:var(--f-head);font-size:var(--fs-sec);letter-spacing:-.01em}
+.side-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  margin:0 calc(var(--s4)*-1);padding:0 var(--s4);display:flex;flex-direction:column;gap:var(--s3)}
+.side-scroll>*{flex:none}   /* 스크롤 영역 안에서는 눌려 찌그러지지 않는다 */
+/* ::-webkit-scrollbar 를 지정하면 macOS 의 '숨는' 오버레이 대신 상시 스크롤바가 된다.
+   표준 scrollbar-width 를 함께 쓰면 크롬이 이 규칙을 무시해 버리므로 일부러 쓰지 않는다.
+   트랙에도 옅은 색을 줘서 '여기가 스크롤 길'이라는 것이 보이게 한다. */
+.side-scroll::-webkit-scrollbar{width:8px}
+.side-scroll::-webkit-scrollbar-track{background:var(--surf-2);border-radius:4px}
+.side-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px;
+  border:2px solid var(--surf)}
+.side-scroll::-webkit-scrollbar-thumb:hover{background:var(--txt-3)}
+
+/* ---- 스크롤 힌트 — 잘린 가장자리를 흐리게 + '더 보기' 알약 ----
+   페이드를 .side 에 겹쳐 놓으면 h2 높이만큼 어긋나므로, 스크롤 상자 자체를 마스크한다.
+   위·아래 어느 쪽에 내용이 남았는지에 따라 마스크가 바뀐다. */
+.side-scroll{--mk-t:0px;--mk-b:0px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 var(--mk-t),
+    #000 calc(100% - var(--mk-b)),transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0,#000 var(--mk-t),
+    #000 calc(100% - var(--mk-b)),transparent 100%)}
+.side.has-above .side-scroll{--mk-t:26px}
+/* 알약이 마지막 내용을 가리지 않도록 자리를 비워 둔다 — 스크롤이 있을 때만 */
+.side.has-more  .side-scroll{--mk-b:30px;padding-bottom:32px}
+.more-cue{position:absolute;left:50%;bottom:10px;transform:translateX(-50%) translateY(6px);
+  display:flex;align-items:center;gap:5px;height:30px;padding:0 12px;z-index:3;
+  border:1px solid var(--line-2);border-radius:var(--r-pill);
+  background:var(--surf-3);color:var(--txt-2);font-size:12px;white-space:nowrap;
+  box-shadow:var(--sh-2);opacity:0;pointer-events:none;
+  transition:opacity var(--t-sw) var(--ease),transform var(--t-sw) var(--ease)}
+.side.has-more .more-cue{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.more-cue:hover{border-color:var(--h2);color:var(--txt)}
+.more-cue s{text-decoration:none;display:block;animation:nudge 1.9s var(--ease) infinite}
+@keyframes nudge{0%,64%,100%{transform:translateY(0)}80%{transform:translateY(3px)}}
+.side.min::before,.side.min::after,.side.min .more-cue{display:none}
+
+/* ---- 사이드 구획 ---- */
+.sdiv{border:0;height:auto;display:flex;align-items:center;gap:var(--s2);
+  font-size:11px;color:var(--txt-3);letter-spacing:.06em;margin-top:2px}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--line)}
+.lbl{font-size:var(--fs-label);color:var(--txt-2);display:flex;align-items:center;gap:6px}
+.ilink{width:26px;height:26px;display:grid;place-items:center;border-radius:var(--r-s);
+  font-size:12px;color:var(--txt-3);flex:none}
+.ilink:hover{background:var(--surf-3);color:var(--h2-tx)}
+
+/* ---- 시그니처: 두 관 눈금 판독 ---- */
+.read{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+/* 두 기체의 눈금값 — 각 기체 색이 카드 안쪽에 옅게 배어 있다 */
+.read .cell{border:1px solid var(--line);border-radius:var(--r-m);padding:var(--s3);
+  position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
+.read .cell::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.read .cell::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5}
+.read .cell.h{background:linear-gradient(152deg,rgba(127,216,236,.11),transparent 58%)}
+.read .cell.o{background:linear-gradient(152deg,rgba(232,103,46,.11),transparent 58%)}
+.read .cell.h::before{background:var(--h2);box-shadow:0 0 12px 0 var(--h2)}
+.read .cell.o::before{background:var(--o2);box-shadow:0 0 12px 0 var(--o2)}
+.read .cell .k{font-size:11px;color:var(--txt-2);display:flex;align-items:center;gap:5px}
+.read .cell .k b{font-weight:600;color:var(--txt)}
+.read .cell .v{font-family:var(--f-num);font-size:var(--fs-num);font-weight:600;line-height:1.15;margin-top:3px}
+.read .cell.h .v{color:var(--h2-tx);text-shadow:0 0 22px rgba(127,216,236,.45)}
+.read .cell.o .v{color:var(--o2-tx);text-shadow:0 0 22px rgba(232,103,46,.40)}
+.ratio{border:1px solid var(--line-2);border-radius:var(--r-m);padding:var(--s3) var(--s4);
+  background:linear-gradient(160deg,var(--surf-3),var(--surf-2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.ratio .cap{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-label);color:var(--txt-2)}
+.ratio .val{font-family:var(--f-num);font-size:var(--fs-num);font-weight:700;line-height:1.15;margin-top:2px;
+  letter-spacing:-.01em}
+/* 부피비 막대 — 두 칸 사이를 띄워 2 : 1 이 눈으로 세어진다 */
+.ratio .bar{height:7px;margin-top:var(--s2);display:flex;gap:3px}
+.ratio .bar i{display:block;height:100%;border-radius:var(--r-pill);min-width:0;
+  transition:width .22s var(--ease)}
+.ratio .bar .a{background:var(--h2);box-shadow:0 0 10px -2px var(--h2)}
+.ratio .bar .b{background:var(--o2);box-shadow:0 0 10px -2px var(--o2)}
+.ratio .bar .a{background:linear-gradient(90deg,var(--h2),color-mix(in srgb,var(--h2) 68%,#fff))}
+.ratio .bar .b{background:linear-gradient(90deg,var(--o2),color-mix(in srgb,var(--o2) 74%,#fff))}
+.ratio .rt{display:flex;justify-content:space-between;font-size:11px;color:var(--txt-3);
+  font-family:var(--f-num);margin-top:5px}
+
+/* ---- 컨트롤 묶음 ---- */
+.grp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl2{display:grid;grid-template-columns:1.55fr 1fr;gap:var(--s2)}
+/* 선택 표시가 칸에서 칸으로 미끄러진다 — 어디에서 어디로 옮겼는지가 눈에 남는다 */
+.seg{display:flex;gap:4px;background:var(--surf-2);border:1px solid var(--line);
+  border-radius:var(--r-m);padding:4px;position:relative;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.18)}
+.seg .thumb{position:absolute;top:4px;bottom:4px;left:0;width:var(--tw,0);
+  transform:translateX(var(--tx,0));border-radius:var(--r-s);
+  background:linear-gradient(180deg,var(--surf-3),var(--surf-2));
+  box-shadow:inset 0 0 0 1px var(--line-2),0 2px 8px -3px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;
+  transition:transform .26s var(--ease),width .26s var(--ease),opacity var(--t-sw) var(--ease)}
+.seg .thumb.on{opacity:1}
+.seg button{flex:1;min-height:38px;border-radius:var(--r-s);font-size:var(--fs-label);
+  color:var(--txt-2);position:relative;z-index:1;
+  transition:color var(--t-sw) var(--ease)}
+.seg button:hover:not(:disabled):not([aria-pressed="true"]){color:var(--txt)}
+.seg button[aria-pressed="true"]{color:var(--txt);font-weight:600}
+.seg button:disabled{opacity:.4}
+.seg.num button{font-family:var(--f-num)}
+@media (prefers-reduced-motion:reduce){.seg .thumb{transition:none}}
+.swch{display:flex;align-items:center;gap:var(--s3);min-height:46px;padding:0 var(--s3);
+  border:1px solid var(--line);border-radius:var(--r-m);width:100%;text-align:left}
+.swch .track{width:44px;height:24px;border-radius:var(--r-pill);background:var(--surf-3);
+  position:relative;flex:none;transition:background var(--t-sw) var(--ease)}
+.swch .track i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:var(--txt-3);transition:transform var(--t-sw) var(--ease),background var(--t-sw) var(--ease)}
+.swch[aria-pressed="true"] .track{background:var(--tint)}
+.swch[aria-pressed="true"] .track i{transform:translateX(20px);background:var(--h2)}
+.swch .tx{font-size:14px}
+.swch .tx s{display:block;font-size:11px;color:var(--txt-3);text-decoration:none}
+
+/* ---- 버튼 ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;
+  padding:0 var(--s4);border-radius:var(--r-m);border:1px solid var(--line-2);
+  font-size:14px;font-weight:600;color:var(--txt);white-space:nowrap;
+  transition:background var(--t-sw) var(--ease),border-color var(--t-sw) var(--ease),transform var(--t-sw) var(--ease)}
+.btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.btn:hover:not(:disabled){background:var(--surf-2);border-color:var(--line-2)}
+.btn:active:not(:disabled){transform:translateY(1px);box-shadow:inset 0 2px 5px rgba(0,0,0,.22)}
+.btn:disabled{opacity:.42}
+.btn.sm{min-height:36px;padding:0 var(--s3);font-size:var(--fs-label)}
+/* 지금 눌러야 할 버튼 — 테두리 색만이 아니라 은은한 빛으로 먼저 눈에 든다 */
+.btn.acc{background:linear-gradient(172deg,var(--tint),transparent 72%);border-color:var(--h2);color:var(--txt);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 20px -13px var(--h2)}
+.btn.acc:hover:not(:disabled){background:linear-gradient(172deg,var(--tint),transparent 58%);
+  border-color:var(--h2);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 24px -12px var(--h2)}
+.btn.line{border-color:var(--line);color:var(--txt-2);box-shadow:none}
+.btn.pri{background:linear-gradient(135deg,var(--brand-blue),#0A4E82);border-color:transparent;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 24px -13px var(--brand-blue)}
+.btn.wide{width:100%}
+
+/* ---- POE ---- */
+.poe{border:1px solid var(--line);border-radius:var(--r-m);padding:var(--s3);
+  display:flex;flex-direction:column;gap:var(--s2)}
+.poe .q{font-size:14px;line-height:1.45}
+.poe .opts{display:flex;flex-direction:column;gap:6px}
+.poe .opts button{display:flex;align-items:center;gap:var(--s2);min-height:44px;padding:0 var(--s3);
+  border:1px solid var(--line);border-radius:var(--r-s);text-align:left;font-size:14px;
+  transition:border-color var(--t-sw) var(--ease),background var(--t-sw) var(--ease)}
+.poe .opts button:hover:not(:disabled){background:var(--surf-2)}
+.poe .opts button[aria-pressed="true"]{border-color:var(--h2);background:var(--tint)}
+.poe .opts button:disabled{opacity:.5}
+.poe .mk{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-2);flex:none}
+.poe .opts button[aria-pressed="true"] .mk{border-color:var(--h2);background:var(--h2);
+  box-shadow:inset 0 0 0 3px var(--surf)}
+/* 결과 카드 — 왼쪽 색 띠로 맞음/다시 보기를 색맹 여부와 무관하게 구분한다 */
+.res{display:flex;gap:var(--s2);font-size:13px;line-height:1.5;padding:var(--s3);
+  border-radius:var(--r-s);background:var(--tint);
+  border-left:3px solid transparent;animation:resin .32s var(--ease)}
+.res.ok{background:linear-gradient(100deg,var(--tint),transparent 82%),var(--surf-2);
+  border-left-color:var(--ok)}
+.res.no{background:linear-gradient(100deg,var(--tint-o),transparent 82%),var(--surf-2);
+  border-left-color:var(--o2-tx)}
+@keyframes resin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.res .g{width:18px;height:18px;flex:none;margin-top:1px}
+.res.ok .g{color:var(--ok)} .res.no .g{color:var(--o2-tx)}
+
+/* ---- 잠금 안내 ---- */
+.lock{display:flex;gap:var(--s2);font-size:13px;line-height:1.5;padding:var(--s3);
+  border-radius:var(--r-s);background:var(--tint-warn);color:var(--txt-2)}
+.lock b{color:var(--txt)}
+
+/* ---- 미니 그래프 HUD ---- */
+.hud{border:1px solid var(--line);border-radius:var(--r-m);padding:var(--s2) var(--s3) var(--s3);height:150px;
+  display:flex;flex-direction:column}
+.hud .cap{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--txt-2);margin-bottom:2px}
+.hud .lg{display:flex;gap:var(--s3);font-size:11px;color:var(--txt-2)}
+.hud .lg s{display:inline-flex;align-items:center;gap:4px;text-decoration:none}
+.hud .lg s::before{content:'';width:9px;height:9px;border-radius:2px}
+.hud .lg s.h::before{background:var(--h2);border-radius:50%}
+.hud .lg s.o::before{background:var(--o2)}
+.hud .box{flex:1;min-height:0;position:relative}
+.hud canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+
+/* ---- 데이터 표 ---- */
+.tbl{width:100%;border-collapse:collapse;font-size:var(--fs-label)}
+.tbl th,.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right}
+.tbl th{color:var(--txt-2);font-weight:500;text-align:right;font-size:11px;letter-spacing:.02em}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.tbl td:first-child{font-family:var(--f-body)}
+.tbl tr:last-child td{border-bottom:0}
+.empty{font-size:13px;color:var(--txt-3);text-align:center;padding:var(--s5) var(--s3);line-height:1.6}
+
+/* ---- 단계 2 도구 ---- */
+.tools{display:flex;flex-direction:column;gap:var(--s2)}
+.tool{display:flex;align-items:center;gap:var(--s3);min-height:56px;padding:var(--s2) var(--s3);
+  border:1px solid var(--line);border-radius:var(--r-m);text-align:left;width:100%;
+  transition:border-color var(--t-sw) var(--ease),background var(--t-sw) var(--ease)}
+.tool:hover:not(:disabled){background:var(--surf-2)}
+.tool[aria-pressed="true"]{border-color:var(--h2);background:var(--tint)}
+.tool:disabled{opacity:.45}
+.tool .g{width:34px;height:34px;flex:none}
+.tool>span{display:flex;flex-direction:column;min-width:0;text-align:left}
+.tool .t{display:block;font-size:14px;font-weight:600;line-height:1.25}
+.tool .d{display:block;font-size:11px;color:var(--txt-3);line-height:1.35}
+.tool .done{margin-left:auto;color:var(--ok);font-size:15px}
+/* 결과 카드 안의 덧붙임 한 줄 — 수소가 타면 물이 생긴다 */
+.res .ex{display:inline-block;margin-top:5px;font-size:12px;color:var(--txt-2)}
+
+/* ---- 2×2 관찰표 ---- */
+.mat{width:100%;border-collapse:separate;border-spacing:4px;font-size:11.5px;table-layout:fixed}
+.mat th{font-weight:600;color:var(--txt-2);font-size:11px;padding:2px}
+.mat td{border:1px solid var(--line);border-radius:var(--r-s);padding:6px 5px;
+  text-align:center;line-height:1.3;color:var(--txt-2)}
+.mat td.cn{border:0;padding:0}
+.mat td.todo{border-style:dashed;color:var(--txt-3)}
+.mat td.ok{background:var(--tint);border-color:var(--h2);color:var(--txt)}
+.mat td.no{background:var(--tint-o);border-color:var(--line-2);color:var(--txt)}
+.mat td b{display:block;font-size:13px;line-height:1.1;margin-bottom:1px}
+.mat td.ok b{color:var(--ok)} .mat td.no b{color:var(--o2-tx)}
+.mat-n{font-size:11px;color:var(--txt-3);margin-top:4px;text-align:right}
+
+/* ---- 단계 3 환산 ---- */
+.calc{display:flex;flex-direction:column;gap:var(--s3)}
+.crow{border:1px solid var(--line);border-radius:var(--r-m);padding:var(--s3);
+  display:flex;flex-direction:column;gap:5px;opacity:.42;
+  transition:opacity var(--t-sw) var(--ease),border-color var(--t-sw) var(--ease)}
+.crow.on{opacity:1;border-color:var(--line-2)}
+.crow .h{font-size:11px;color:var(--txt-2);letter-spacing:.02em}
+.crow .eq{font-family:var(--f-num);font-size:14px;display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;line-height:1.7}
+.crow .eq em{font-style:normal;color:var(--txt-3);font-size:12px}
+.crow .eq .h2{color:var(--h2-tx);font-weight:600}
+.crow .eq .o2{color:var(--o2-tx);font-weight:600}
+.crow .eq .out{font-weight:700;font-size:16px}
+
+/* ---- 퀴즈 ---- */
+.quiz{max-width:620px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:var(--s4);
+  min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s2)}
+.quiz .qh{display:flex;align-items:center;gap:var(--s2);font-size:var(--fs-label);color:var(--txt-2)}
+.quiz .qh .tag{padding:3px 10px;border-radius:var(--r-pill);background:var(--surf-3);font-size:11px}
+.quiz .qq{font-family:var(--f-head);font-size:var(--fs-sec);line-height:1.5}
+.quiz .opts{display:flex;flex-direction:column;gap:var(--s2)}
+.quiz .opts button{display:flex;align-items:center;gap:var(--s3);min-height:52px;padding:var(--s2) var(--s4);
+  border:1px solid var(--line);border-radius:var(--r-m);text-align:left;font-size:15px;
+  transition:border-color var(--t-sw) var(--ease),background var(--t-sw) var(--ease)}
+.quiz .opts button:hover:not(:disabled){background:var(--surf-2)}
+.quiz .opts button .mk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line-2);flex:none}
+.quiz .opts button.correct{border-color:var(--ok);background:var(--tint)}
+.quiz .opts button.correct .mk{border-color:var(--ok);background:var(--ok)}
+.quiz .opts button.wrong{border-color:var(--o2);background:var(--tint-o)}
+.quiz .opts button.wrong .mk{border-color:var(--o2);background:var(--o2)}
+.quiz .opts button:disabled{opacity:.75}
+/* 순서 배열 */
+.ord{display:flex;flex-direction:column;gap:var(--s2)}
+.ord button{display:flex;align-items:center;gap:var(--s3);min-height:52px;padding:var(--s2) var(--s3);
+  border:1px solid var(--line);border-radius:var(--r-m);text-align:left;font-size:15px;width:100%}
+.ord button .n{font-family:var(--f-num);font-size:12px;width:22px;height:22px;flex:none;
+  display:grid;place-items:center;border-radius:50%;border:1px solid var(--line-2);color:var(--txt-3)}
+.ord button.picked .n{background:var(--h2);border-color:var(--h2);color:var(--canvas-bg);font-weight:700}
+.ord button:disabled{opacity:.75}
+
+/* ---- 보고서 ---- */
+.rep{display:flex;flex-direction:column;gap:var(--s3);min-height:0}
+.sumcard{border:1px solid var(--line);border-radius:var(--r-m);padding:var(--s3)}
+.sumcard .h{display:flex;gap:6px;font-size:11px;color:var(--txt-3);letter-spacing:.02em}
+.sumcard .m{font-size:14px;font-weight:600;margin-top:3px}
+.sumcard .d{display:flex;flex-wrap:wrap;gap:var(--s3);font-size:12px;color:var(--txt-2);margin-top:4px}
+.sumcard .d b{font-family:var(--f-num);color:var(--txt)}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld input,.fld textarea{width:100%;padding:10px var(--s3);border:1px solid var(--line);
+  border-radius:var(--r-m);background:var(--surf-2);font-size:14px;resize:none}
+.fld input:focus,.fld textarea:focus{outline:none;border-color:var(--h2)}
+.fld textarea{min-height:96px;line-height:1.6}
+.cnt{font-size:11px;color:var(--txt-3);font-family:var(--f-num);text-align:right}
+.cnt.err{color:var(--warn)}
+
+/* ---- 오버레이 공통 ---- */
+#scrim{position:fixed;inset:0;background:rgba(4,12,17,.62);opacity:0;pointer-events:none;z-index:60;
+  transition:opacity var(--t-sw) var(--ease)}
+#scrim.on{opacity:1;pointer-events:auto}
+.modal{position:fixed;z-index:70;left:50%;top:50%;transform:translate(-50%,-46%);
+  width:min(520px,calc(100vw - 32px));max-height:86dvh;display:flex;flex-direction:column;
+  background:var(--surf);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-3);
+  opacity:0;pointer-events:none;transition:opacity var(--t-sw) var(--ease),transform var(--t-sw) var(--ease)}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal .mh{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);border-bottom:1px solid var(--line)}
+.modal .mh h3{font-family:var(--f-head);font-size:var(--fs-sec);flex:1}
+.modal .mb{padding:var(--s4);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--s3)}
+.modal .mf{padding:var(--s3) var(--s4);border-top:1px solid var(--line);display:flex;gap:var(--s2);justify-content:flex-end}
+.modal p{font-size:14px;line-height:1.65;color:var(--txt-2)}
+.modal p b{color:var(--txt)}
+.chk{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3);border:1px solid var(--line);
+  border-radius:var(--r-m);text-align:left;width:100%;font-size:14px;line-height:1.5}
+.chk .bx{width:20px;height:20px;border-radius:var(--r-s);border:1.5px solid var(--line-2);flex:none;
+  display:grid;place-items:center;margin-top:1px;transition:background var(--t-sw) var(--ease)}
+.chk[aria-pressed="true"]{border-color:var(--ok)}
+.chk[aria-pressed="true"] .bx{background:var(--ok);border-color:var(--ok)}
+.chk .bx svg{width:13px;height:13px;color:var(--canvas-bg);opacity:0}
+.chk[aria-pressed="true"] .bx svg{opacity:1}
+
+/* ---- 이론 드로어 ---- */
+.drawer{position:fixed;z-index:70;top:0;right:0;width:var(--w-drawer);max-width:100vw;height:100dvh;
+  background:var(--surf);border-left:1px solid var(--line);box-shadow:var(--sh-3);
+  transform:translateX(101%);transition:transform var(--t-sw) var(--ease);
+  display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.drawer .dh{padding:var(--s4);border-bottom:1px solid var(--line);position:relative}
+.drawer .grab{display:none}
+.drawer .dt{display:flex;align-items:center;gap:var(--s3)}
+.drawer .dt h3{font-family:var(--f-head);font-size:var(--fs-sec);flex:1}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:var(--s3)}
+.chips button{padding:6px 11px;border-radius:var(--r-pill);border:1px solid var(--line);
+  font-size:12px;color:var(--txt-2);transition:border-color var(--t-sw) var(--ease),color var(--t-sw) var(--ease)}
+.chips button:hover{border-color:var(--h2);color:var(--txt)}
+.chips button[aria-current="true"]{border-color:var(--h2);color:var(--txt);background:var(--tint)}
+.drawer .db{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--s4);
+  display:flex;flex-direction:column;gap:var(--s6)}
+.ccard{display:flex;flex-direction:column;gap:var(--s2);scroll-margin-top:var(--s3)}
+.ccard h4{font-family:var(--f-head2);font-size:16px;display:flex;align-items:center;gap:var(--s2)}
+.ccard h4 .c{font-family:var(--f-num);font-size:11px;width:20px;height:20px;flex:none;
+  display:grid;place-items:center;border-radius:50%;background:var(--surf-3);color:var(--txt-2)}
+.ccard .fig{background:var(--canvas-bg);border-radius:var(--r-m);padding:var(--s2);overflow:hidden}
+.ccard .fig svg{display:block;width:100%;height:auto}
+.ccard .def{font-size:14px;font-weight:600;color:var(--txt)}
+.ccard p{font-size:var(--fs-label);line-height:1.65;color:var(--txt-2)}
+.ccard .link{font-size:var(--fs-label);line-height:1.6;padding:var(--s2) var(--s3);
+  border-radius:var(--r-s);background:var(--tint);color:var(--txt-2)}
+.ccard .link b{color:var(--txt)}
+.ccard details{border:1px solid var(--line);border-radius:var(--r-s);padding:var(--s2) var(--s3)}
+.ccard summary{font-size:var(--fs-label);color:var(--txt-2);cursor:pointer;list-style:none}
+.ccard summary::-webkit-details-marker{display:none}
+.ccard summary::before{content:'＋ ';color:var(--txt-3)}
+.ccard details[open] summary::before{content:'－ '}
+.ccard details p{margin-top:var(--s2)}
+.fx{font-family:var(--f-num);font-size:var(--fs-label);line-height:1.9;color:var(--txt);
+  background:var(--surf-2);border-radius:var(--r-s);padding:var(--s2) var(--s3);
+  overflow-x:auto;white-space:nowrap}
+
+/* ---- 컨트롤 바 ---- */
+#ctrl{display:flex;align-items:center;gap:var(--s3);padding:0 var(--s4);
+  border-top:1px solid var(--line);background:var(--surf)}
+#ctrl .now{display:flex;flex-direction:column;min-width:0}
+#ctrl .now .a{font-size:11px;color:var(--txt-3);letter-spacing:.02em}
+#ctrl .now .b{font-size:var(--fs-label);color:var(--txt-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ctrl .grow{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+.brandline{font-size:11px;color:var(--txt-3);white-space:nowrap}
+
+/* ---- 토스트 ---- */
+#toast{position:fixed;left:50%;bottom:calc(var(--h-ctrl) + 16px);transform:translate(-50%,10px);
+  z-index:90;max-width:min(440px,calc(100vw - 32px));padding:11px var(--s4);
+  background:var(--surf-3);border:1px solid var(--line-2);border-radius:var(--r-pill);
+  font-size:var(--fs-label);color:var(--txt);box-shadow:var(--sh-2);
+  opacity:0;pointer-events:none;transition:opacity var(--t-sw) var(--ease),transform var(--t-sw) var(--ease);
+  text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---- 보고서 시트 (오프스크린) ---- */
+#sheet{position:fixed;left:-9999px;top:0;width:794px;background:#fff;color:#15202B;
+  padding:44px;font-family:var(--f-body)}
+#sheet h1{font-family:var(--f-head2);font-weight:400;font-size:27px;color:#0A4E82;margin-bottom:6px}
+#sheet .meta{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:#4A5C67;
+  padding-bottom:14px;border-bottom:2px solid #0A4E82;margin-bottom:20px}
+#sheet .meta b{color:#15202B}
+#sheet h3{font-family:var(--f-head2);font-weight:400;font-size:15px;color:#0A4E82;margin:20px 0 8px}
+#sheet table{width:100%;border-collapse:collapse;font-size:13px}
+#sheet th,#sheet td{border:1px solid #CBD8E0;padding:7px 10px;text-align:left}
+#sheet th{background:#EEF4F8;font-weight:600;color:#2A3A44}
+#sheet .box{border:1px solid #CBD8E0;border-radius:8px;padding:12px 14px;font-size:13px;
+  line-height:1.7;background:#F8FBFD;min-height:56px;white-space:pre-wrap}
+#sheet .ft{margin-top:26px;padding-top:12px;border-top:1px solid #CBD8E0;
+  font-size:11px;color:#6C7C86;line-height:1.7}
+
+/* ---- SNS ---- */
+.sns{display:flex;gap:var(--s2);flex-wrap:wrap}
+.sns-btn{display:inline-flex;align-items:center;gap:var(--s2);min-height:44px;
+  padding:6px 16px 6px 6px;border-radius:var(--r-pill);border:1px solid var(--line-2);
+  color:var(--txt);font-size:var(--fs-label);font-weight:600;text-decoration:none;
+  transition:border-color var(--t-sw) var(--ease)}
+.sns-btn:hover{border-color:var(--line-2)}
+.sns-badge{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;flex:none}
+.sns-yt:hover{border-color:#FF000088}
+.sns-yt .sns-badge{background:#FF0000}
+.sns-ig:hover{border-color:#DD2A7B88}
+.sns-ig .sns-badge{background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)}
+.foot-brand{font-size:12px;line-height:1.85;color:var(--txt-2);white-space:pre-line}
+
+/* ==================== 반응형 ==================== */
+/* 터치 기기에서는 모든 조작 요소를 44×44 이상으로 (지침 §6) */
+@media (pointer:coarse),(max-width:900px){
+  .chip,.tbtn{height:44px}
+  .ico{width:44px;height:44px}
+  .seg button{min-height:44px}
+  .btn.sm{min-height:44px}
+  /* 44px 히트 영역을 주되 줄 높이는 늘리지 않는다 */
+  .ilink{width:44px;height:44px;margin:-9px -9px -9px 0}
+}
+@media (max-width:900px){
+  :root{--h-header:56px;--h-steps:46px;--h-ctrl:60px;
+        --fs-title:20px;--fs-sec:17px;--fs-num:24px;--w-side:0px}
+  #hd h1 small{display:none}
+  .ico{width:44px;height:44px}
+  .view{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;
+        gap:var(--s2);padding:var(--s2)}
+  .side{max-height:min(52dvh,384px);border-radius:var(--r-l) var(--r-l) 0 0;position:relative;
+        padding-top:var(--s5)}
+  .side::before{content:'';position:absolute;top:7px;left:50%;transform:translateX(-50%);
+        width:34px;height:4px;border-radius:2px;background:var(--line-2)}
+  .side.min{max-height:44px;overflow:hidden}
+  .side.min>*{display:none}
+  .step .lb{display:none}
+  .step[aria-current="step"] .lb{display:inline}
+  .drawer{width:100%;height:88dvh;top:auto;bottom:0;border-left:0;border-top:1px solid var(--line);
+        border-radius:var(--r-l) var(--r-l) 0 0;transform:translateY(101%)}
+  .drawer.on{transform:none}
+  .drawer .grab{display:block;position:absolute;top:7px;left:50%;transform:translateX(-50%);
+        width:34px;height:4px;border-radius:2px;background:var(--line-2)}
+  .drawer .dh{padding-top:var(--s5)}
+  .cv-note{display:none}
+  #ctrl .brandline{display:none}
+}
+/* 좁은 화면 세로 — 시트 안에서 조작 4종이 한눈에 들어오도록 압축 */
+@media (max-width:900px) and (orientation:portrait){
+  .side>h2{display:none}
+  .side-scroll{gap:6px}
+  .read .cell{padding:var(--s2) var(--s3)}
+  .ratio{padding:6px var(--s3)}
+  .ratio .rt{display:none}
+  .grp{gap:3px}
+  /* 2단계는 화면에서 도구를 끌어야 하므로 무대에 높이를 더 준다 */
+  .view[data-v="2"] .side{max-height:min(43dvh,318px)}
+  .mat{font-size:11px}
+  .mat td{padding:5px 3px}
+}
+/* 좁은 화면 가로 — 세로 공간이 없으므로 데스크톱처럼 좌우로 나누고,
+   조작 4종이 스크롤 없이 보이도록 읽기 영역을 압축한다 */
+@media (max-width:900px) and (orientation:landscape){
+  .view{grid-template-columns:minmax(0,1fr) minmax(210px,38%);grid-template-rows:minmax(0,1fr);
+        gap:var(--s2);padding:var(--s2)}
+  .side{max-height:none;border-radius:var(--r-l);padding:var(--s2)}
+  .side::before{display:none}
+  .side>h2{display:none}
+  .side-scroll{gap:5px;margin:0 calc(var(--s2)*-1);padding:0 var(--s2)}
+  .read .cell{padding:4px var(--s2)}
+  .read .cell .v{font-size:18px}
+  .ratio{padding:5px var(--s3)}
+  .ratio .val{font-size:18px}
+  .ratio .bar,.ratio .rt{display:none}
+  .ctl2{grid-template-columns:1fr;gap:6px}
+  .grp{flex-direction:row;align-items:center;gap:var(--s2)}
+  .grp>.lbl{flex:none;width:36px}
+  .grp>.seg{flex:1;min-width:0}
+}
+/* 헤더가 좁아지면 SNS 아이콘을 먼저 접는다 — ⓘ 정보 창 안에 같은 링크가 남아 있다 */
+@media (max-width:700px){
+  .hd-r .sns-yt,.hd-r .sns-ig,.hd-div{display:none}
+}
+/* 헤더가 좁아지면 조작 버튼이 화면 밖으로 밀려나므로 단계적으로 줄인다.
+   ⓘ 정보 버튼(SNS 링크가 든 곳)이 잘리면 안 된다. */
+@media (max-width:560px){
+  #hd h1{display:none}
+  #hd{gap:var(--s2);padding:0 var(--s2)}
+  .hd-r{gap:6px}
+  .chip .nm,.chip .pen{display:none}
+  .tbtn .lb2{display:none}          /* 📖 만 남긴다 — aria-label 로 뜻은 남는다 */
+  .tbtn{padding:0 var(--s3)}
+}
+@media (max-width:430px){
+  .logo{display:none}               /* 브랜드는 캔버스 워터마크와 ⓘ 창에 남아 있다 */
+}
+@media (max-height:520px){
+  :root{--h-header:48px;--h-steps:38px;--h-ctrl:54px}
+  .hud{display:none}
+  .read .cell{padding:6px var(--s2)}
+  .quiz{gap:var(--s3)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header id="hd">
+  <span class="logo"><i></i>송쌤과학</span>
+  <h1>물의 전기분해<small>송쌤과학 가상실험실</small></h1>
+  <div class="hd-r">
+    <button class="chip" id="who" onclick="Gate.open(true)" aria-label="학번과 이름 입력하기">
+      <b id="who-t">학번 입력</b><span class="nm" id="who-n"></span><span class="pen">수정</span>
+    </button>
+    <button class="tbtn pulse" id="b-theory" onclick="Theory.open()" aria-label="원리 정리 열기">📖<span class="lb2">원리</span></button>
+    <button class="ico" id="b-theme" onclick="UI.theme()" aria-label="밝은 화면으로 바꾸기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button class="ico" id="b-sound" onclick="UI.sound()" aria-label="소리 켜기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 6 9H2v6h4l5 4z"/><path id="mute-x" d="m17 9 4 6m0-6-4 6"/></svg>
+    </button>
+    <span class="hd-div" aria-hidden="true"></span>
+    <a class="ico sns-yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener"
+       aria-label="송쌤과학 유튜브 채널 새 창으로 열기" title="YouTube @songsamscience">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.5s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.3-1C16.6 4 12 4 12 4s-4.6 0-7.8.2c-.4.1-1.4.1-2.3 1C1.2 5.9 1 7.5 1 7.5S.8 9.4.8 11.3v1.4c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.2 7.6.2s4.6 0 7.8-.2c.4-.1 1.4-.1 2.3-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8v-1.4c0-1.9-.2-3.8-.2-3.8zM9.8 15.1V8.9l6.2 3.1z"/></svg>
+    </a>
+    <a class="ico sns-ig" href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener"
+       aria-label="송쌤과학 인스타그램 새 창으로 열기" title="Instagram @songsamscience">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <button class="ico" onclick="UI.modal('m-info')" aria-label="실험실 정보">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8.2v.1"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav id="steps" aria-label="실험 단계"></nav>
+
+<main id="stage">
+
+<!-- ===== 1단계 · 전기분해 ===== -->
+<section class="view" data-v="1" aria-label="전기분해">
+  <div class="cv-wrap">
+    <canvas id="cv1"></canvas>
+    <div class="cv-badge"><s id="lamp1"></s><span id="cvb1">전원 꺼짐</span></div>
+    <div class="cv-note" id="cvn1">전원을 켜면 두 전극에서 기포가 올라와요.</div>
+  </div>
+  <aside class="side" id="side1">
+    <h2>눈금 읽기</h2>
+    <div class="side-scroll">
+      <div class="sdiv" aria-hidden="true">측정</div>
+      <div class="read">
+        <div class="cell h"><span class="k"><b>(−)극</b> 수소</span><span class="v num" id="v-h2">0.0<span class="u">mL</span></span></div>
+        <div class="cell o"><span class="k"><b>(+)극</b> 산소</span><span class="v num" id="v-o2">0.0<span class="u">mL</span></span></div>
+      </div>
+      <div class="ratio">
+        <div class="cap"><span>부피비 (수소 : 산소)</span>
+          <button class="ilink" onclick="Theory.open('c-ratio')" aria-label="부피비 개념 보기">📖</button></div>
+        <div class="val num" id="v-ratio">— : 1</div>
+        <div class="bar"><i class="a" id="bar-h" style="width:0%"></i><i class="b" id="bar-o" style="width:0%"></i></div>
+        <div class="rt"><span id="v-time">0분 00초</span><span id="v-note">전원 대기</span></div>
+      </div>
+
+      <div class="sdiv" aria-hidden="true">조작</div>
+      <div class="ctl2">
+        <div class="grp">
+          <span class="lbl">전압</span>
+          <div class="seg num" id="seg-volt"></div>
+        </div>
+        <div class="grp">
+          <span class="lbl">시간</span>
+          <div class="seg" id="seg-speed">
+            <button aria-pressed="true" onclick="Lab.setSpeed(1)" aria-label="실시간으로 관찰">실시간</button>
+            <button aria-pressed="false" onclick="Lab.setSpeed(12)" aria-label="12배 빠르게 관찰">×12</button>
+          </div>
+        </div>
+      </div>
+      <button class="swch" id="sw-elyte" onclick="Lab.toggleElyte()" aria-pressed="true">
+        <span class="track"><i></i></span>
+        <span class="tx" id="tx-elyte">수산화 나트륨 수용액<s>전류가 흘러요</s></span>
+      </button>
+      <button class="btn wide" id="b-record" onclick="Lab.record()">측정값 기록하기</button>
+
+      <div class="sdiv" aria-hidden="true">예측과 관찰</div>
+      <div id="poe1"></div>
+      <div id="obs1"></div>
+      <div style="display:flex;gap:var(--s2)">
+        <button class="btn line sm" id="b-model" style="flex:1" aria-pressed="false"
+          onclick="Lab.toggleModel()">입자 모형</button>
+        <button class="btn line sm" style="flex:1" onclick="Lab.reset()">눈금 초기화</button>
+      </div>
+
+      <div class="sdiv" aria-hidden="true">분석</div>
+      <div class="hud" id="hud1">
+        <div class="cap"><span>시간에 따른 기체 부피</span>
+          <span class="lg"><s class="h">수소</s><s class="o">산소</s></span></div>
+        <div class="box"><canvas id="chart1"></canvas></div>
+      </div>
+      <table class="tbl" id="tbl1"></table>
+    </div>
+  </aside>
+</section>
+
+<!-- ===== 2단계 · 기체 확인 ===== -->
+<section class="view" data-v="2" aria-label="기체 확인">
+  <div class="cv-wrap">
+    <canvas id="cv2"></canvas>
+    <div class="cv-badge"><s id="lamp2"></s><span id="cvb2">기체 확인</span></div>
+    <div class="cv-note" id="cvn2">확인할 관을 고르고, 아래에서 도구를 골라 가져다 대세요.</div>
+  </div>
+  <aside class="side" id="side2">
+    <h2>기체 확인</h2>
+    <div class="side-scroll">
+      <div id="poe2"></div>
+      <div class="grp">
+        <span class="lbl">어느 관을 확인할까요?</span>
+        <div class="seg" id="seg-tube">
+          <button aria-pressed="true" onclick="Test.pickTube('h2')">(−)극 관</button>
+          <button aria-pressed="false" onclick="Test.pickTube('o2')">(+)극 관</button>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">도구를 끌어다 관 입구에 대세요</span>
+        <div class="tools" id="tools2"></div>
+      </div>
+      <div id="res2"></div>
+      <div class="sdiv" aria-hidden="true">관찰표</div>
+      <div id="mat2"></div>
+    </div>
+  </aside>
+</section>
+
+<!-- ===== 3단계 · 질량 환산 ===== -->
+<section class="view" data-v="3" aria-label="질량 환산">
+  <div class="cv-wrap">
+    <canvas id="cv3"></canvas>
+    <div class="cv-badge"><s></s><span>질량 환산</span></div>
+    <div class="cv-note">부피는 수소가 2배인데, 질량은 산소가 8배예요.</div>
+  </div>
+  <aside class="side" id="side3">
+    <h2>질량비 구하기</h2>
+    <div class="side-scroll">
+      <div class="calc" id="calc3"></div>
+      <div id="mq3"></div>
+    </div>
+  </aside>
+</section>
+
+<!-- ===== 4단계 · 확인 퀴즈 ===== -->
+<section class="view solo" data-v="4" aria-label="확인 퀴즈">
+  <div class="quiz" id="quiz4"></div>
+</section>
+
+<!-- ===== 5단계 · 탐구 보고서 ===== -->
+<section class="view" data-v="5" aria-label="탐구 보고서">
+  <div class="side" style="border-radius:var(--r-l)">
+    <h2>실험 기록</h2>
+    <div class="side-scroll" id="rep-sum"></div>
+  </div>
+  <aside class="side" id="side5">
+    <h2>결론 쓰기</h2>
+    <div class="side-scroll">
+      <div class="fld">
+        <span class="lbl">이 실험으로 알게 된 것 <span class="mini">(80자 이상)</span></span>
+        <textarea id="r-c" oninput="Report.check()" placeholder="물이 원소인지 화합물인지, 그렇게 판단한 근거를 부피비·질량비·기체 확인 결과와 함께 써 보세요."></textarea>
+        <span class="cnt" id="r-cnt">0 / 80자</span>
+      </div>
+      <div class="fld">
+        <span class="lbl">더 알아보고 싶은 것</span>
+        <input id="r-q" oninput="Report.check()" placeholder="예: 소금물로 하면 결과가 같을까?">
+      </div>
+      <div class="lock" id="r-hint"></div>
+    </div>
+  </aside>
+</section>
+
+</main>
+
+<footer id="ctrl">
+  <button class="btn line sm" id="c-prev" onclick="Flow.go(App.step-1)">이전</button>
+  <div class="now"><span class="a" id="c-a">1단계</span><span class="b" id="c-b">전기분해</span></div>
+  <div class="grow">
+    <span class="brandline">© 송쌤과학</span>
+    <button class="btn acc" id="c-main">전원 켜기</button>
+    <button class="btn sm" id="c-next" onclick="Flow.go(App.step+1)">다음</button>
+  </div>
+</footer>
+
+</div>
+
+<div id="scrim" onclick="UI.closeAll()"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="sr" id="live" aria-live="polite"></div>
+<div id="sheet" aria-hidden="true"></div>
+<!-- ===== 이론 드로어 ===== -->
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-t" aria-hidden="true">
+  <div class="dh">
+    <span class="grab"></span>
+    <div class="dt">
+      <h3 id="dr-t">원리 정리</h3>
+      <button class="ico" onclick="Theory.close()" aria-label="원리 정리 닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="chips" id="dr-chips"></div>
+  </div>
+  <div class="db" id="dr-body"></div>
+</aside>
+
+<!-- ===== 안전 체크리스트 ===== -->
+<div class="modal" id="m-safe" role="dialog" aria-modal="true" aria-labelledby="safe-t">
+  <div class="mh"><h3 id="safe-t">시작 전 안전 확인</h3></div>
+  <div class="mb">
+    <p>전기와 약품, 불꽃을 함께 쓰는 실험이에요. 네 가지를 확인하고 시작할게요.</p>
+    <div id="safe-list"></div>
+  </div>
+  <div class="mf">
+    <button class="btn acc" id="safe-go" onclick="Safety.done()" disabled>모두 확인했어요</button>
+  </div>
+</div>
+
+<!-- ===== 학번·이름 ===== -->
+<div class="modal" id="m-gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <div class="mh"><h3 id="gate-t">학번과 이름</h3></div>
+  <div class="mb">
+    <div class="fld"><span class="lbl">학번</span>
+      <input id="g-id" inputmode="numeric" placeholder="예: 20315" maxlength="10"></div>
+    <div class="fld"><span class="lbl">이름</span>
+      <input id="g-name" placeholder="예: 홍길동" maxlength="12"></div>
+    <p style="font-size:12px">🔒 학번과 이름은 <b>이 기기에 저장하지 않아요.</b> 화면을 새로 고치면 지워집니다. 보고서를 저장할 때만 쓰여요.</p>
+  </div>
+  <div class="mf">
+    <button class="btn line" onclick="UI.closeAll()">나중에</button>
+    <button class="btn acc" onclick="Gate.save()">입력 완료</button>
+  </div>
+</div>
+
+<!-- ===== 용어 ===== -->
+<div class="modal" id="m-term" role="dialog" aria-modal="true" aria-labelledby="tm-w">
+  <div class="mh"><h3 id="tm-w"></h3>
+    <button class="ico" onclick="UI.closeAll()" aria-label="닫기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="mb"><p id="tm-d"></p></div>
+</div>
+
+<!-- ===== 정보 ===== -->
+<div class="modal" id="m-info" role="dialog" aria-modal="true" aria-labelledby="info-t">
+  <div class="mh"><h3 id="info-t">실험실 정보</h3>
+    <button class="ico" onclick="UI.closeAll()" aria-label="닫기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="mb">
+    <p><b>물의 전기분해</b> · 중학교 2학년 「물질의 구성」<br>
+      2022 개정 교육과정 성취기준 <b>[9과11-01]</b> 원소와 화합물의 정의<br>
+      연계 <b>[9과16-04]</b> 성분 원소의 질량비 (중3)</p>
+    <p style="font-size:13px">기체 밀도는 0 ℃·1 기압 기준 실측값이에요. 수소 0.0899 g/L, 산소 1.429 g/L.
+      물의 분해 전압은 약 1.5 V이고, 그보다 낮으면 반응이 일어나지 않아요.</p>
+    <p style="font-size:12px">⌨ 단축키 — <b>Alt + ← / →</b> 단계 이동, <b>Space</b> 전원, <b>Esc</b> 닫기</p>
+    <div class="sns">
+      <a class="sns-btn sns-yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener" aria-label="송쌤과학 유튜브 채널 새 창으로 열기">
+        <span class="sns-badge"><svg viewBox="0 0 24 24" width="17" height="17" fill="#fff" aria-hidden="true"><path d="M23 7.5s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.3-1C16.6 4 12 4 12 4s-4.6 0-7.8.2c-.4.1-1.4.1-2.3 1C1.2 5.9 1 7.5 1 7.5S.8 9.4.8 11.3v1.4c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.2 7.6.2s4.6 0 7.8-.2c.4-.1 1.4-.1 2.3-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8v-1.4c0-1.9-.2-3.8-.2-3.8zM9.8 15.1V8.9l6.2 3.1z"/></svg></span>
+        <span>YouTube <strong>송쌤과학</strong></span>
+      </a>
+      <a class="sns-btn sns-ig" href="https://www.instagram.com/songsamscience" target="_blank" rel="noopener" aria-label="송쌤과학 인스타그램 새 창으로 열기">
+        <span class="sns-badge"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.2" fill="#fff" stroke="none"/></svg></span>
+        <span>Instagram <strong>송쌤과학</strong></span>
+      </a>
+    </div>
+    <div class="foot-brand">🧪 송쌤과학 (Song Ssaem Science)
+ⓒ 2026 송세호 | 아주중학교
+📺 YouTube: @songsamscience  📷 Instagram: @songsamscience
+⚠ 무단 복제·상업적 이용 금지</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+'use strict';
+
+/* ==================================================================
+   실측 근거
+   · 9 V에서 (−)극 수소 발생 속도 3.64 mL/min  (10분 36.4 mL — 첨부 실험 자료)
+   · 부피비 H₂:O₂ = 2:1  (2H₂O → 2H₂ + O₂, 계수비 = 분자 수비 = 부피비)
+   · 기체 밀도 0 ℃·1 atm — H₂ 0.0899 g/L, O₂ 1.429 g/L (CRC Handbook)
+     → 질량비 H:O = 1:8
+   · 물의 분해 전압 약 1.5 V (이론 1.23 V + 과전압)
+   · 산소는 수소보다 물에 잘 녹는다 (0 ℃ 용해도 48.9 vs 21.4 mL/L)
+     → (+)극 부피가 이론값보다 약 1% 작게 모여 부피비가 2.00보다 살짝 크게 나온다
+   ================================================================== */
+const SCI={
+  rate9:3.64,            // 9 V 기준 (−)극 mL/min
+  vMin:1.5,              // 분해 전압
+  o2Bias:0.99,           // 산소 용해 손실
+  dH2:0.0899, dO2:1.429, // g/L
+  tubeMax:50             // 눈금관 용량 mL
+};
+const VOLTS=[
+  {v:1,  f:0,    lb:'1 V'},
+  {v:6,  f:0.6,  lb:'6 V'},
+  {v:9,  f:1.0,  lb:'9 V'},
+  {v:12, f:1.5,  lb:'12 V'}
+];
+
+const STEPS=[
+  {n:1,label:'전기분해'},{n:2,label:'기체 확인'},{n:3,label:'질량 환산'},
+  {n:4,label:'확인 퀴즈'},{n:5,label:'보고서'}
+];
+
+const SAFE=[
+  '수산화 나트륨은 피부와 눈에 닿으면 위험해요. 보안경과 장갑을 껴요.',
+  '전원을 켠 채로 전극을 만지지 않아요.',
+  '수소는 잘 타는 기체예요. 확인은 소량으로, 주변에 다른 불꽃이 없을 때 해요.',
+  '유리관은 깨지기 쉬워요. 무리하게 힘주지 않아요.'
+];
+
+const TERMS={
+  '전해질':'물에 녹아 이온으로 나뉘어 전류가 흐르게 하는 물질이에요. 수산화 나트륨·황산 나트륨 등이 있습니다.',
+  '원소':'더 이상 다른 물질로 분해되지 않는, 물질을 이루는 기본 성분이에요.',
+  '화합물':'두 종류 이상의 원소가 결합해 만들어진 물질이에요. 화학적 방법으로 분해할 수 있습니다.',
+  '가연성':'스스로 잘 타는 성질이에요. 수소가 여기에 해당합니다.',
+  '조연성':'스스로 타지는 않지만 다른 물질이 타는 것을 돕는 성질이에요. 산소가 여기에 해당합니다.'
+};
+
+/* ==================== 상태 ==================== */
+const App={
+  step:1, id:'', name:'', sound:false, theme:'dark',
+  safeOK:false,
+  pred1:null, pred2:null,           // POE 예측
+  obs1:null,                        // 변인 통제 관찰 답
+  row:null,                         // 측정 기록 — 1회 {t,h2,o2,volt}
+  usedVolt:{},                      // 사용해 본 전압 종류
+  tested:{}, testLog:[], tried:{},  // 기체 확인 결과 · 시도한 조합(2×2 관찰표)
+  massStage:0, massAns:null,        // 질량 환산 진행
+  quiz:{i:0,ans:{},ord:[]},
+  reduced:matchMedia('(prefers-reduced-motion:reduce)').matches,
+  lowSpec:(navigator.hardwareConcurrency||4)<=4,
+  /* 개인정보·측정값은 메모리에만 둔다. 저장하는 것은 화면 설정뿐. */
+  savePref(){try{localStorage.setItem('ss_elec_pref',JSON.stringify({t:App.theme,s:App.sound}));}catch(e){}},
+  loadPref(){try{return JSON.parse(localStorage.getItem('ss_elec_pref')||'null');}catch(e){return null;}}
+};
+
+/* ==================== 공통 UI ==================== */
+const UI={
+  el(id){return document.getElementById(id)},
+  toast(msg){const t=UI.el('toast');t.innerHTML=msg;t.classList.add('on');
+    clearTimeout(UI._tt);UI._tt=setTimeout(()=>t.classList.remove('on'),2600);},
+  live(msg){UI.el('live').textContent=msg;},
+  theme(){
+    App.theme=App.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=App.theme;
+    UI.el('b-theme').setAttribute('aria-label',App.theme==='dark'?'밝은 화면으로 바꾸기':'어두운 화면으로 바꾸기');
+    const mt=document.querySelector('meta[name=theme-color]');
+    if(mt)mt.setAttribute('content',App.theme==='dark'?'#0B1A22':'#EDF1F3');
+    C.read(); Chart2.theme(); Draw.all();
+    App.savePref();
+  },
+  sound(){
+    App.sound=!App.sound;
+    UI.el('b-sound').classList.toggle('on',App.sound);
+    UI.el('mute-x').style.display=App.sound?'none':'';
+    UI.el('b-sound').setAttribute('aria-label',App.sound?'소리 끄기':'소리 켜기');
+    if(App.sound)Sfx.play('tap');
+    App.savePref();
+  },
+  modal(id){
+    UI._last=document.activeElement;
+    UI.el('scrim').classList.add('on');UI.el(id).classList.add('on');
+    const f=UI.el(id).querySelector('button,input,textarea');if(f)setTimeout(()=>f.focus(),60);
+  },
+  term(w){if(!TERMS[w])return;UI.el('tm-w').textContent=w;UI.el('tm-d').textContent=TERMS[w];UI.modal('m-term');},
+  /* 세그먼트의 선택 표시를 누른 칸으로 미끄러뜨린다.
+     칸 내용은 volts()·sync() 가 통째로 다시 그리므로, 누가 바꾸든 따라가도록
+     aria-pressed 변화와 자식 교체를 모두 지켜본다. */
+  segThumb(seg){
+    if(!seg||seg._thumbed)return;
+    seg._thumbed=true;
+    let queued=false;
+    const place=(tries)=>{
+      queued=false;
+      if(!seg.isConnected)return;
+      let t=seg.querySelector(':scope > i.thumb');
+      /* 반드시 맨 뒤에 붙인다 — seg.children[i] 로 버튼을 세는 코드가 있어서
+         앞에 끼우면 칸 번호가 하나씩 밀린다 */
+      if(!t){ t=document.createElement('i');t.className='thumb';t.setAttribute('aria-hidden','true');
+              seg.appendChild(t); }
+      const on=seg.querySelector('button[aria-pressed="true"]');
+      if(!on){ t.classList.remove('on');return; }
+      // 절대 배치의 기준은 seg 의 패딩 상자다. 그 기준까지의 거리를 직접 잰다.
+      const sr=seg.getBoundingClientRect(), br=on.getBoundingClientRect();
+      /* 화면이 숨어 있거나 아직 배치 전이면 폭이 0으로 나온다.
+         그때 표시를 지워 버리면 되돌아왔을 때 사라진 채로 남는다 —
+         지우지 말고 몇 프레임 더 기다렸다 다시 잰다. */
+      if(!br.width){
+        if((tries|0)<12)requestAnimationFrame(()=>place((tries|0)+1));
+        return;
+      }
+      t.style.setProperty('--tx',(br.left-sr.left-seg.clientLeft)+'px');
+      t.style.setProperty('--tw',br.width+'px');
+      t.classList.add('on');
+    };
+    const ask=()=>{ if(queued)return;queued=true;requestAnimationFrame(()=>place(0)); };
+    /* 단계가 바뀌면 화면이 display:none 을 오간다. 그때 ResizeObserver 가 늘
+       다시 울려 주지는 않으므로, Flow.go 가 직접 부를 수 있게 걸어 둔다. */
+    seg._segAsk=ask;
+    try{
+      new MutationObserver(ask).observe(seg,
+        {childList:true,subtree:true,attributes:true,attributeFilter:['aria-pressed']});
+      new ResizeObserver(ask).observe(seg);
+    }catch(e){}
+    ask();
+  },
+  /* 지금 보이는 화면의 세그먼트 표시를 다시 앉힌다 */
+  segSync(){
+    document.querySelectorAll('.view.on .seg').forEach(s=>s._segAsk&&s._segAsk());
+  },
+  /* 사이드 패널에 "아래에 더 있다"를 알린다 — macOS 오버레이 스크롤바는 손을 대기 전엔 보이지 않는다.
+     .side 에 has-above / has-more 를 걸어 페이드와 알약을 켠다. */
+  scrollCue(box){
+    const side=box.parentElement;if(!side)return;
+    // 눌러서 내려가는 알약 — 손가락으로 긁는 것보다 쉽다
+    const cue=document.createElement('button');
+    cue.className='more-cue';cue.type='button';
+    cue.innerHTML='<s>↓</s>더 보기';
+    cue.setAttribute('aria-label','사이드 패널 아래쪽 내용 더 보기');
+    cue.onclick=()=>{
+      box.scrollBy({top:box.clientHeight*.85,
+        behavior:App.reduced?'auto':'smooth'});
+      Sfx.play('tap');
+    };
+    side.appendChild(cue);
+
+    let queued=false;
+    const upd=()=>{
+      queued=false;
+      /* 문턱을 여유 있게 둔다 — has-more 가 붙이는 아래 여백 때문에 켜졌다 꺼졌다 하지 않도록 */
+      const more =box.scrollHeight-box.scrollTop-box.clientHeight>10;
+      const above=box.scrollTop>6;
+      side.classList.toggle('has-more',more);
+      side.classList.toggle('has-above',above);
+    };
+    // sync() 가 0.12초마다 내용을 갈아 끼우므로 프레임당 한 번으로 모은다
+    const ask=()=>{ if(queued)return;queued=true;requestAnimationFrame(upd); };
+    box.addEventListener('scroll',ask,{passive:true});
+    try{
+      new ResizeObserver(ask).observe(box);                       // 회전·시트 접기
+      new MutationObserver(ask).observe(box,{childList:true,subtree:true,characterData:true});
+    }catch(e){}
+    window.addEventListener('resize',ask);
+    upd();
+  },
+  closeAll(){
+    UI.el('scrim').classList.remove('on');
+    document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on'));
+    Theory.close(true);
+    if(UI._last&&UI._last.focus)UI._last.focus();
+  }
+};
+window.UIterm=w=>UI.term(w);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(n,d)=>n.toFixed(d===undefined?1:d);
+
+/* ==================== 사운드 (Web Audio 합성) ==================== */
+const Sfx={
+  ctx:null, master:null, last:0,
+  /* master → (dry + wet→convolver) → compressor → 출력.
+     잔향 임펄스는 지수로 사그라드는 잡음을 직접 채워 만든다 — 외부 파일이 없다. */
+  ensure(){
+    if(!App.sound)return null;
+    try{
+      if(!Sfx.ctx){
+        const a=Sfx.ctx=new (window.AudioContext||window.webkitAudioContext)();
+        Sfx.master=a.createGain();Sfx.master.gain.value=.9;
+        const lim=a.createDynamicsCompressor();
+        const dry=a.createGain();dry.gain.value=1;
+        Sfx.master.connect(dry);dry.connect(lim);
+        try{
+          const dur=.55, n=Math.floor(a.sampleRate*dur);
+          const buf=a.createBuffer(2,n,a.sampleRate);
+          for(let ch=0;ch<2;ch++){
+            const d=buf.getChannelData(ch);
+            for(let i=0;i<n;i++)
+              d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.6);
+          }
+          const cv=a.createConvolver();cv.buffer=buf;
+          const wet=a.createGain();wet.gain.value=.12;   // 교실 정도의 옅은 공간감
+          Sfx.master.connect(cv);cv.connect(wet);wet.connect(lim);
+        }catch(_){}
+        lim.connect(a.destination);
+      }
+      if(Sfx.ctx.state==='suspended')Sfx.ctx.resume();
+      return Sfx.ctx;
+    }catch(e){return null;}
+  },
+  beep(f1,f2,dur,type,vol,delay){
+    const a=Sfx.ensure();if(!a)return;
+    const t0=a.currentTime+(delay||0);
+    const o=a.createOscillator(),g=a.createGain();
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,t0);
+    if(f2&&f2!==f1)o.frequency.exponentialRampToValueAtTime(Math.max(25,f2),t0+dur);
+    g.gain.setValueAtTime(.0001,t0);
+    g.gain.exponentialRampToValueAtTime(vol||.12,t0+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    o.connect(g);g.connect(Sfx.master);o.start(t0);o.stop(t0+dur+.05);
+  },
+  noise(dur,freq,q,vol,delay){
+    const a=Sfx.ensure();if(!a)return;
+    const t0=a.currentTime+(delay||0);
+    const n=Math.max(1,Math.floor(a.sampleRate*dur));
+    const b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+    const src=a.createBufferSource();src.buffer=b;
+    const bp=a.createBiquadFilter();bp.type='bandpass';bp.frequency.value=freq;bp.Q.value=q||1;
+    const g=a.createGain();
+    g.gain.setValueAtTime(vol||.07,t0);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    src.connect(bp);bp.connect(g);g.connect(Sfx.master);src.start(t0);src.stop(t0+dur+.02);
+  },
+  /* 필터가 f0 → f1 로 훑고 지나가는 잡음 — 폭발 몸통·화염 스웰의 뼈대 */
+  sweep(f0,f1,dur,type,vol,delay,q){
+    const a=Sfx.ensure();if(!a)return;
+    const t0=a.currentTime+(delay||0);
+    const n=Math.max(1,Math.floor(a.sampleRate*dur));
+    const b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+    const src=a.createBufferSource();src.buffer=b;
+    const f=a.createBiquadFilter();f.type=type||'lowpass';
+    f.frequency.setValueAtTime(f0,t0);
+    f.frequency.exponentialRampToValueAtTime(Math.max(30,f1),t0+dur);
+    f.Q.value=q||1;
+    const g=a.createGain();
+    g.gain.setValueAtTime(.0001,t0);
+    g.gain.exponentialRampToValueAtTime(vol||.1,t0+dur*.14);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+    src.connect(f);f.connect(g);g.connect(Sfx.master);src.start(t0);src.stop(t0+dur+.02);
+  },
+  /* 탁탁 튀는 알갱이 — 불이 붙거나 사그라들 때의 잔결 */
+  grains(n,span,freq,vol){
+    for(let i=0;i<n;i++)
+      Sfx.noise(.012+Math.random()*.02, freq*(.6+Math.random()*.9), 5,
+        vol*(.4+Math.random()*.8), Math.random()*span);
+  },
+  play(kind){
+    if(!App.sound)return;
+    const now=performance.now();
+    if(kind!=='bub'&&kind!=='grab'&&now-Sfx.last<80)return;
+    Sfx.last=now;
+    switch(kind){
+      case 'tap':   Sfx.beep(880,640,.06,'triangle',.09); break;
+      case 'click': Sfx.beep(1200,700,.045,'square',.06); break;   // 전원 스위치 딸깍
+      case 'bub':   Sfx.noise(.04+Math.random()*.03,680+Math.random()*760,
+                      2+Math.random()*1.6,.018+Math.random()*.022); break;
+      /* 수소 퍽 — 날카로운 앞머리 + 낮게 훑고 지나가는 몸통 + 쿵 + 잔결 */
+      case 'pop':
+        Sfx.noise(.035,2600,.7,.20);
+        Sfx.sweep(3200,180,.30,'lowpass',.22,.005,1.1);
+        Sfx.beep(170,46,.26,'sawtooth',.13,.006);
+        Sfx.grains(5,.22,900,.05);
+        break;
+      /* 산소 활활 — 부풀어 오르는 화염 + 크래클 */
+      case 'flare':
+        Sfx.sweep(380,2400,.58,'bandpass',.11,0,1.4);
+        Sfx.beep(420,900,.42,'triangle',.055);
+        Sfx.grains(8,.42,1800,.045);
+        break;
+      case 'strike': Sfx.sweep(1200,5200,.16,'highpass',.10,0,.8);
+                     Sfx.noise(.09,2200,1.2,.06,.09); break;       // 성냥 긁는 치익
+      case 'cork':   Sfx.beep(150,520,.075,'sine',.16);
+                     Sfx.noise(.05,420,1.6,.10,.02); break;        // 고무마개 뽁
+      case 'grab':   Sfx.beep(420,300,.035,'triangle',.045); break;
+      case 'place':  Sfx.beep(260,190,.05,'triangle',.05); break;
+      case 'hiss':   Sfx.sweep(2600,600,.34,'highpass',.055,0,.7); break;  // 불씨가 꺼짐
+      case 'ok':    Sfx.beep(659.25,659.25,.11,'sine',.13); Sfx.beep(987.77,987.77,.2,'sine',.11,.1); break;
+      case 'no':    Sfx.beep(220,150,.24,'square',.09); break;
+      case 'done':  [523.25,659.25,783.99,1046.5].forEach((f,i)=>Sfx.beep(f,f,.28,'triangle',.11,i*.1)); break;
+      case 'shot':  Sfx.noise(.05,3000,.8,.12); Sfx.beep(1400,900,.05,'square',.05,.03); break;
+    }
+  }
+};
+
+/* ==================== 색 캐시 (테마 전환 시 재생성) ==================== */
+const C={
+  v:{},
+  read(){
+    const s=getComputedStyle(document.documentElement);
+    ['glass','soln','h2','o2','pt','cu','txt','txt-2','txt-3','line','line-2','canvas-bg','ok','warn']
+      .forEach(k=>C.v[k]=s.getPropertyValue('--'+k).trim());
+  },
+  a(key,alpha){    // hex → rgba
+    const h=C.v[key]||'#888';
+    const n=parseInt(h.slice(1),16);
+    return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${alpha})`;
+  },
+  mix(key,white,amt){ // 밝게/어둡게
+    const h=C.v[key]||'#888';const n=parseInt(h.slice(1),16);
+    let r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    const t=white?255:0;
+    r=Math.round(lerp(r,t,amt));g=Math.round(lerp(g,t,amt));b=Math.round(lerp(b,t,amt));
+    return `rgb(${r},${g},${b})`;
+  }
+};
+
+/* ==================== 캔버스 헬퍼 ==================== */
+const CV={
+  reg:{},
+  init(id){
+    const cv=UI.el(id);if(!cv)return null;
+    const wrap=cv.parentElement;
+    cv._fit=()=>{
+      const r=wrap.getBoundingClientRect();
+      if(!r.width||!r.height)return;
+      const d=Math.min(window.devicePixelRatio||1,2);
+      const nw=Math.round(r.width*d),nh=Math.round(r.height*d);
+      if(cv.width===nw&&cv.height===nh)return;
+      cv.width=nw;cv.height=nh;cv._d=d;cv._w=r.width;cv._h=r.height;
+    };
+    new ResizeObserver(cv._fit).observe(wrap);cv._fit();
+    CV.reg[id]=cv;return cv;
+  },
+  fitAll(){Object.values(CV.reg).forEach(c=>c._fit&&c._fit());},
+  ctx(id){
+    const cv=CV.reg[id];if(!cv)return null;
+    if(!cv._w)cv._fit();
+    if(!cv._w||!cv._h)return null;
+    const x=cv.getContext('2d');
+    x.setTransform(cv._d,0,0,cv._d,0,0);
+    x.clearRect(0,0,cv._w,cv._h);
+    return {x,w:cv._w,h:cv._h};
+  },
+  /* 설계 좌표(780×600)를 실제 캔버스에 맞춰 축소·중앙 정렬 */
+  fit(x,w,h,DW,DH){
+    const s=Math.min(w/DW,h/DH);
+    const ox=(w-DW*s)/2, oy=(h-DH*s)/2;
+    x.translate(ox,oy);x.scale(s,s);
+    return s;
+  },
+  rr(x,a,b,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);
+    x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();
+  },
+  /* 접촉 그림자 — 광원 좌상단이므로 항상 우하향 */
+  shadow(x,cx,cy,rx,ry,al){
+    x.save();x.globalAlpha=al||.3;x.fillStyle='#000';x.beginPath();
+    x.ellipse(cx+rx*.16,cy,rx,ry,0,0,Math.PI*2);x.fill();x.restore();
+  },
+  mark(x,w,h){
+    x.save();x.font='500 10px "JetBrains Mono",monospace';
+    x.fillStyle='rgba(170,192,204,.34)';x.textAlign='right';x.textBaseline='bottom';
+    x.fillText('© 송쌤과학',w-12,h-9);x.restore();
+  },
+  /* 화면 좌표 → 설계 좌표. CV.fit 의 역변환이며 캔버스 조작의 기준이 된다 */
+  toDesign(id,clientX,clientY,DW,DH){
+    const el=CV.reg[id];if(!el)return null;
+    const r=el.getBoundingClientRect();
+    if(!r.width||!r.height)return null;
+    const s=Math.min(r.width/DW,r.height/DH);
+    return {x:(clientX-r.left-(r.width-DW*s)/2)/s, y:(clientY-r.top-(r.height-DH*s)/2)/s, s};
+  },
+  inBox(p,bx,by,bw,bh){ return p.x>=bx&&p.x<=bx+bw&&p.y>=by&&p.y<=by+bh; }
+};
+/* ==================================================================
+   기하 — 호프만식 전기분해 장치 (설계 공간 780 × 600)
+   주 광원: 좌상단 45°  → 모든 하이라이트는 왼쪽, 그림자는 오른쪽 아래
+   ================================================================== */
+const G={
+  W:780,H:600,
+  TT:100, TB:396,          // 눈금 0 mL ~ 50 mL
+  TW:76, WALL:7,
+  LX:250, RX:454,          // 눈금관 바깥 왼쪽 x  (좌=(−)극 수소 / 우=(+)극 산소)
+  FX:352, FW:76, FNECK:188, FLARE:150,   // 중앙 깔때기
+  MANY:396, MANH:32,       // 연결관
+  PSX:262, PSY:444, PSW:256, PSH:74,     // 전원 장치 — 화면에서 직접 조작한다
+  TABY:524
+};
+/* 전원 장치 위 조작부 (설계 좌표) — 캔버스 클릭 판정과 그리기가 같은 값을 쓴다 */
+G.PS={ sw:[276,456,76,50], vdn:[362,456,46,50], disp:[412,456,54,50], vup:[470,456,46,50] };
+G.LC=G.LX+G.TW/2;  G.RC=G.RX+G.TW/2;  G.FC=G.FX+G.FW/2;
+G.PPM=(G.TB-G.TT)/SCI.tubeMax;         // 1 mL 당 픽셀
+const mlY=v=>G.TT+v*G.PPM;             // 부피 → 액면 y
+
+/* ==================== 시뮬레이션 ==================== */
+const Lab={
+  power:false, volt:9, elyte:true, speed:1, model:false,
+  t:0, h2:0, o2:0, full:false, bub:[], rip:[], spawn:0, bubSfx:0,
+  series:[], sampleAt:0,      // 그래프용 자동 표본 (30초 간격)
+  cap(){ return App.lowSpec||App.reduced ? 26 : 64; },
+  factor(){ const v=VOLTS.find(o=>o.v===Lab.volt); return v?v.f:0; },
+  /* (−)극 수소 발생 속도 mL/min — 전해질이 없으면 거의 흐르지 않는다 */
+  rate(){
+    if(!Lab.power||Lab.full)return 0;
+    if(Lab.volt<SCI.vMin)return 0;
+    return SCI.rate9*Lab.factor()*(Lab.elyte?1:0.015);
+  },
+  /* 눈금 판독값 — 눈금 사이를 읽는 흔들림(±0.12 mL)을 부드럽게 흉내 */
+  read(which){
+    const base=which==='h2'?Lab.h2:Lab.o2;
+    if(base<=0)return 0;
+    const p=which==='h2'?0:2.1;
+    const n=(Math.sin(Lab.t*0.7+p)*0.6+Math.sin(Lab.t*0.23+p*2)*0.4)*0.12;
+    return Math.max(0,base+n);
+  },
+  ratio(){ const o=Lab.read('o2'); return o>0.4?Lab.read('h2')/o:null; },
+  update(dt){
+    const r=Lab.rate();
+    if(r>0){
+      Lab.t+=dt;
+      Lab.h2+=r*dt/60;
+      Lab.o2+=r*SCI.o2Bias/2*dt/60;
+      // 그래프는 자동으로 표본을 모은다 (학생이 여러 번 기록할 필요가 없다)
+      if(Lab.t>=Lab.sampleAt){
+        Lab.sampleAt=Lab.t+30;
+        Lab.series.push({t:Lab.t,h2:Lab.h2,o2:Lab.o2});
+        if(Lab.series.length>26)Lab.series.shift();
+        Chart2.sync();
+      }
+      if(Lab.h2>=SCI.tubeMax){
+        Lab.h2=SCI.tubeMax; Lab.o2=Math.min(Lab.o2,SCI.tubeMax/2);
+        Lab.full=true; Lab.power=false;
+        UI.toast('눈금관이 가득 찼어요. 전원을 껐습니다.');
+        Sfx.play('done'); Step1.sync();
+      }
+    }
+    /* 기포 — 전극 표면에서 생겨 이탈해 떠오르고 위쪽 기체층에 합류한다 */
+    const cap=Lab.cap();
+    if(r>0){
+      Lab.spawn+=dt*(4+r*2.6)*(App.reduced?0.35:1);
+      while(Lab.spawn>=1&&Lab.bub.length<cap){
+        Lab.spawn-=1;
+        Lab.push('h2'); if(Math.random()<0.5)Lab.push('o2');
+      }
+      Lab.bubSfx-=dt;
+      if(Lab.bubSfx<=0){ Sfx.play('bub'); Lab.bubSfx=0.16+Math.random()*0.22; }
+    }else{ Lab.spawn=0; }
+    const topH=mlY(Lab.h2), topO=mlY(Lab.o2);
+    for(let i=Lab.bub.length-1;i>=0;i--){
+      const b=Lab.bub[i];
+      b.v+=42*dt;                 // 부력에 의한 상승 가속
+      b.y-=b.v*dt;
+      b.ph+=dt*3.4;
+      const lim=b.s==='h2'?topH:topO;
+      // 액면에 닿으면 터지면서 작은 파문을 남긴다
+      if(b.y-b.r<=lim){
+        if(!App.reduced&&Lab.rip.length<18)
+          Lab.rip.push({x:b.x,y:lim,r:b.r,age:0,s:b.s});
+        Lab.bub.splice(i,1);
+      }
+    }
+    for(let i=Lab.rip.length-1;i>=0;i--){
+      const p=Lab.rip[i];
+      p.age+=dt;
+      if(p.age>=.42)Lab.rip.splice(i,1);
+    }
+  },
+  push(side){
+    const cx=side==='h2'?G.LC:G.RC;
+    Lab.bub.push({s:side, x:cx+(Math.random()-.5)*16, y:G.TB-8-Math.random()*22,
+      r:1.6+Math.random()*2.4, v:8+Math.random()*10, ph:Math.random()*6.3});
+  },
+  reset(){
+    Lab.power=false;Lab.t=0;Lab.h2=0;Lab.o2=0;Lab.full=false;Lab.bub.length=0;Lab.rip.length=0;
+    Lab.series=[];Lab.sampleAt=0;
+    App.row=null;Chart2.sync();Step1.table();Step1.sync();Flow.render();
+    UI.toast('눈금을 처음으로 되돌렸어요.');Sfx.play('tap');
+  },
+  /* --- 조작 --- */
+  togglePower(){
+    if(!Lab.power&&Lab.full){
+      UI.toast('눈금관이 가득 찼어요. 초기화한 뒤 다시 해 보세요.'); return;
+    }
+    if(!Lab.power&&App.pred1===null&&!Lab._nudged){
+      Lab._nudged=true;
+      UI.toast('오른쪽에서 <b>어느 쪽에 더 모일지</b> 먼저 예측해 보면 더 재미있어요.');
+    }
+    Lab.power=!Lab.power;Sfx.play('click');
+    if(Lab.power&&Lab.volt<SCI.vMin)
+      UI.toast('전압이 낮아 물이 분해되지 않아요. 물의 분해 전압은 약 <b>1.5 V</b>예요.');
+    else if(Lab.power&&!Lab.elyte)
+      UI.toast('순수한 물은 전류가 거의 흐르지 않아요. 전해질을 넣어 볼까요?');
+    Step1.sync();
+  },
+  /* 전원 장치의 − / + 로 한 칸씩 — 사이드 패널과 같은 setVolt 를 거쳐 상태가 어긋나지 않는다 */
+  stepVolt(d){
+    const i=VOLTS.findIndex(o=>o.v===Lab.volt);
+    const j=clamp(i+d,0,VOLTS.length-1);
+    if(j===i){ Sfx.play('tap'); return; }
+    Lab.setVolt(VOLTS[j].v);
+  },
+  /* 캔버스에서 눌린 곳이 어느 조작부인지 */
+  hit(p){
+    const P=G.PS;
+    if(CV.inBox(p,...P.sw))return 'power';
+    if(CV.inBox(p,...P.vdn))return 'vdown';
+    if(CV.inBox(p,...P.vup))return 'vup';
+    return null;
+  },
+  setVolt(v){
+    Lab.volt=v;
+    if(v>=SCI.vMin&&Lab.elyte)App.usedVolt[v]=1;
+    Sfx.play('tap');Step1.sync();
+    if(Lab.power&&v<SCI.vMin)
+      UI.toast('전압이 낮아 물이 분해되지 않아요. 물의 분해 전압은 약 <b>1.5 V</b>예요.');
+  },
+  toggleElyte(){
+    Lab.elyte=!Lab.elyte;Sfx.play('tap');
+    UI.toast(Lab.elyte?'전해질을 녹였어요. 이제 전류가 흘러요.'
+                      :'전해질을 뺐어요. 순수한 물은 전류가 거의 흐르지 않아요.');
+    Step1.sync();
+  },
+  setSpeed(s){ Lab.speed=s;Sfx.play('tap');Step1.sync(); },
+  toggleModel(){ Lab.model=!Lab.model;Sfx.play('tap');Step1.sync(); },
+  /* 측정은 한 번으로 끝낸다. 다시 누르면 지금 눈금으로 바꿔 적는다. */
+  record(){
+    if(Lab.h2<0.5){ UI.toast('기체가 좀 더 모인 뒤에 기록해 볼까요?'); return; }
+    const again=!!App.row;
+    App.row={t:Lab.t,h2:Lab.read('h2'),o2:Lab.read('o2'),volt:Lab.volt};
+    App.usedVolt[Lab.volt]=1;
+    Sfx.play('ok');
+    UI.toast(`${again?'다시 적었어요':'기록했어요'}. 수소 ${fmt(App.row.h2)} mL · 산소 ${fmt(App.row.o2)} mL`);
+    Step1.table();Step1.sync();Flow.render();
+  }
+};
+
+/* ==================================================================
+   렌더링 — 외곽선1 + 내부면2~3 + 하이라이트1 + 접촉그림자1
+   ================================================================== */
+const Draw={
+  all(){ if(App.step===1)Draw.s1(); else if(App.step===2)Draw.s2(); else if(App.step===3)Draw.s3(); },
+
+  /* ---------- 재질 헬퍼 ----------
+     유리에 비치는 빛은 선이 아니라 번짐이다. 타원형 그러데이션을 눕혀 쓰면
+     위아래 끝이 저절로 사라져 딱딱한 흰 줄이 생기지 않는다. */
+  spec(x,cx,cy,rw,rh,a){
+    x.save();
+    x.translate(cx,cy);x.scale(rw,rh);
+    const g=x.createRadialGradient(0,0,0,0,0,1);
+    g.addColorStop(0,`rgba(255,255,255,${a})`);
+    g.addColorStop(.45,`rgba(255,255,255,${(a*.45).toFixed(3)})`);
+    g.addColorStop(1,'rgba(255,255,255,0)');
+    x.fillStyle=g;x.beginPath();x.arc(0,0,1,0,6.284);x.fill();
+    x.restore();
+  },
+  /* 물체가 놓인 자리에 깔리는 빛 웅덩이 — 무대가 허공에 뜨지 않게 잡아 준다 */
+  pool(x,cx,cy,rw,rh,col,a){
+    x.save();x.globalCompositeOperation='lighter';
+    x.translate(cx,cy);x.scale(rw,rh);
+    const g=x.createRadialGradient(0,0,0,0,0,1);
+    g.addColorStop(0,col.replace(/[\d.]+\)$/,a+')'));
+    g.addColorStop(.6,col.replace(/[\d.]+\)$/,(a*.28).toFixed(3)+')'));
+    g.addColorStop(1,col.replace(/[\d.]+\)$/,'0)'));
+    x.fillStyle=g;x.beginPath();x.arc(0,0,1,0,6.284);x.fill();
+    x.restore();
+  },
+
+  /* ---------- 유리관 ---------- */
+  tube(x,tx,vol,side,ts){
+    const ty=G.TT-14, th=(G.TB+8)-ty, tw=G.TW, W=G.WALL;
+    const inX=tx+W, inW=tw-W*2;
+    const my=mlY(vol);
+    const key=side==='h2'?'h2':'o2';
+
+    // 접촉 그림자 (아래 연결관과 만나는 곳)
+    CV.shadow(x,tx+tw/2,G.TB+14,tw*.52,7,.34);
+
+    // 관 안쪽 배경 — 뒤쪽 유리가 비쳐 약간 밝다
+    x.save();
+    CV.rr(x,tx,ty,tw,th,tw*.30);x.clip();
+    const bgg=x.createLinearGradient(tx,0,tx+tw,0);
+    bgg.addColorStop(0,C.mix('canvas-bg',true,.16));
+    bgg.addColorStop(.45,C.mix('canvas-bg',true,.05));
+    bgg.addColorStop(1,C.mix('canvas-bg',true,.12));
+    x.fillStyle=bgg;x.fillRect(tx,ty,tw,th);
+
+    // 모인 기체 — 관 위쪽
+    if(vol>0.02){
+      const gg=x.createLinearGradient(inX,0,inX+inW,0);
+      gg.addColorStop(0,C.a(key,.26));gg.addColorStop(.5,C.a(key,.13));gg.addColorStop(1,C.a(key,.22));
+      x.fillStyle=gg;x.fillRect(inX,ty,inW,my-ty);
+    }
+    // 전해질 수용액 — 관 아래쪽. 원통이라 가장자리가 어둡다
+    const sg=x.createLinearGradient(inX,0,inX+inW,0);
+    sg.addColorStop(0,C.mix('soln',false,.30));
+    sg.addColorStop(.34,C.mix('soln',true,.14));
+    sg.addColorStop(1,C.mix('soln',false,.22));
+    x.fillStyle=sg;x.fillRect(inX,my,inW,G.TB+10-my);
+
+    // 오목한 액면 (물이 유리를 타고 올라 가장자리가 높다)
+    x.beginPath();
+    x.moveTo(inX,my-3.2);
+    x.quadraticCurveTo(inX+inW/2,my+4.6,inX+inW,my-3.2);
+    x.lineTo(inX+inW,my+5);x.lineTo(inX,my+5);x.closePath();
+    x.fillStyle=C.mix('soln',true,.30);x.fill();
+    x.beginPath();
+    x.moveTo(inX,my-3.2);x.quadraticCurveTo(inX+inW/2,my+4.6,inX+inW,my-3.2);
+    x.strokeStyle=C.a('glass',.72);x.lineWidth=1.3;x.stroke();
+    x.restore();
+
+    Draw.ticks(x,tx,side,ts);
+
+    // 유리 벽 — 좌측이 밝고 우측이 어둡다 (광원 좌상단)
+    x.save();CV.rr(x,tx,ty,tw,th,tw*.30);x.clip();
+    const lw=x.createLinearGradient(tx,0,tx+W,0);
+    lw.addColorStop(0,C.a('glass',.30));lw.addColorStop(.55,C.a('glass',.62));lw.addColorStop(1,C.a('glass',.10));
+    x.fillStyle=lw;x.fillRect(tx,ty,W,th);
+    const rw=x.createLinearGradient(tx+tw-W,0,tx+tw,0);
+    rw.addColorStop(0,C.a('glass',.08));rw.addColorStop(.5,C.a('glass',.26));rw.addColorStop(1,C.a('glass',.40));
+    x.fillStyle=rw;x.fillRect(tx+tw-W,ty,W,th);
+    // 유리에 비친 빛 — 왼쪽에 길게, 오른쪽 모서리에 짧게
+    Draw.spec(x,tx+tw*.25,ty+th*.42,tw*.085,th*.40,.22);
+    Draw.spec(x,tx+tw*.80,ty+th*.30,tw*.045,th*.18,.10);
+    x.restore();
+
+    // 외곽선 — 면보다 약간 어두운 색
+    CV.rr(x,tx,ty,tw,th,tw*.30);
+    x.strokeStyle=C.mix('glass',false,.46);x.lineWidth=1.6;x.stroke();
+  },
+
+  /* ---------- 눈금 ---------- */
+  ticks(x,tx,side,ts){
+    const left=side==='h2';
+    const ex=left?tx+G.WALL:tx+G.TW-G.WALL;   // 눈금이 붙는 안쪽 벽
+    const dir=left?1:-1;
+    // 스테이지가 작아지면 눈금 밀도를 줄여 겹침을 막는다
+    const dense=ts>=0.72?1:(ts>=0.5?5:10);
+    x.save();
+    x.font='500 10px "JetBrains Mono",monospace';
+    x.textBaseline='middle';
+    for(let v=0;v<=SCI.tubeMax;v++){
+      if(dense===5&&v%5)continue;
+      if(dense===10&&v%10)continue;
+      const y=mlY(v), big=v%10===0, mid=v%5===0;
+      x.beginPath();
+      x.moveTo(ex,y);x.lineTo(ex+dir*(big?15:mid?10:5.5),y);
+      x.strokeStyle=C.a('glass',big?.9:mid?.62:.4);
+      x.lineWidth=big?1.5:1;x.stroke();
+      if(big&&ts>=0.42){
+        x.fillStyle=C.a('glass',.85);
+        x.textAlign=left?'right':'left';
+        x.fillText(String(v),tx+(left?-6:G.TW+6),y);
+      }
+    }
+    if(ts>=0.42){
+      x.fillStyle=C.a('glass',.6);x.font='500 9px "JetBrains Mono",monospace';
+      x.textAlign=left?'right':'left';
+      x.fillText('mL',tx+(left?-6:G.TW+6),G.TT-16);
+    }
+    x.restore();
+  },
+
+  /* ---------- 전극 ---------- */
+  electrode(x,cx,live,key){
+    const top=G.TB-46, bot=G.TB+6, w=13;
+    const g=x.createLinearGradient(cx-w/2,0,cx+w/2,0);
+    g.addColorStop(0,C.mix('pt',true,.34));   // 곡면 하이라이트 — 왼쪽
+    g.addColorStop(.42,C.v['pt']);
+    g.addColorStop(1,C.mix('pt',false,.44));
+    CV.rr(x,cx-w/2,top,w,bot-top,3);x.fillStyle=g;x.fill();
+    x.strokeStyle=C.mix('pt',false,.55);x.lineWidth=1;x.stroke();
+    if(live){
+      x.save();x.globalAlpha=.4;x.strokeStyle=C.v[key];x.lineWidth=2.4;
+      CV.rr(x,cx-w/2-1.5,top-1.5,w+3,bot-top+3,4);x.stroke();x.restore();
+    }
+  },
+
+  /* ---------- 기포 ---------- */
+  bubbles(x){
+    // 액면에서 터진 자리에 남는 파문
+    for(const p of Lab.rip){
+      const u=p.age/.42;
+      x.save();x.globalAlpha=(1-u)*.55;
+      x.strokeStyle=C.a(p.s,.9);x.lineWidth=Math.max(.5,1.4*(1-u));
+      x.beginPath();x.ellipse(p.x,p.y,p.r+u*9,(p.r+u*9)*.34,0,0,6.284);x.stroke();
+      x.restore();
+    }
+    for(const b of Lab.bub){
+      const bx=b.x+Math.sin(b.ph)*2.2;
+      const g=x.createRadialGradient(bx-b.r*.36,b.y-b.r*.36,b.r*.12,bx,b.y,b.r);
+      g.addColorStop(0,'rgba(255,255,255,.92)');
+      g.addColorStop(.55,C.a(b.s,.5));
+      g.addColorStop(1,C.a(b.s,.14));
+      x.beginPath();x.arc(bx,b.y,b.r,0,6.284);x.fillStyle=g;x.fill();
+      x.strokeStyle=C.a(b.s,.42);x.lineWidth=.7;x.stroke();
+    }
+  },
+
+  /* ---------- 콕(고무마개) ---------- */
+  stopcock(x,cx,open){
+    const y=G.TT-14, h=26, w=17;
+    CV.shadow(x,cx,y+2,15,4,.28);
+    const g=x.createLinearGradient(cx-w,0,cx+w,0);
+    g.addColorStop(0,'#6E5044');g.addColorStop(.4,'#8A6552');g.addColorStop(1,'#4E382F');
+    x.beginPath();
+    x.moveTo(cx-w,y-h);x.lineTo(cx+w,y-h);x.lineTo(cx+w*.72,y);x.lineTo(cx-w*.72,y);x.closePath();
+    x.fillStyle=g;x.fill();
+    x.strokeStyle='#3D2B24';x.lineWidth=1.2;x.stroke();
+    x.fillStyle='rgba(255,255,255,.20)';x.fillRect(cx-w+2,y-h+2,w*2-4,3.4);
+    if(open){ x.strokeStyle=C.a('ok',.9);x.lineWidth=2;
+      x.beginPath();x.arc(cx,y-h-9,4.6,0,6.284);x.stroke(); }
+  },
+
+  /* ---------- 중앙 깔때기 (물 저장부) ---------- */
+  funnel(x,rise){
+    const cx=G.FC, nx=G.FX, nw=G.FW, ntop=G.FNECK, ftop=G.FLARE;
+    const flw=nw*1.62;
+    // 유리 몸체
+    x.beginPath();
+    x.moveTo(cx-flw/2,ftop);x.lineTo(cx-nw/2,ntop);x.lineTo(cx-nw/2,G.MANY+6);
+    x.lineTo(cx+nw/2,G.MANY+6);x.lineTo(cx+nw/2,ntop);x.lineTo(cx+flw/2,ftop);
+    const bg=x.createLinearGradient(cx-flw/2,0,cx+flw/2,0);
+    bg.addColorStop(0,C.mix('canvas-bg',true,.14));
+    bg.addColorStop(.45,C.mix('canvas-bg',true,.04));
+    bg.addColorStop(1,C.mix('canvas-bg',true,.10));
+    x.fillStyle=bg;x.fill();
+    // 안에 담긴 수용액
+    const wy=clamp(258-rise,ftop+10,G.MANY);
+    x.save();
+    x.beginPath();
+    x.moveTo(cx-flw/2,ftop);x.lineTo(cx-nw/2,ntop);x.lineTo(cx-nw/2,G.MANY+6);
+    x.lineTo(cx+nw/2,G.MANY+6);x.lineTo(cx+nw/2,ntop);x.lineTo(cx+flw/2,ftop);x.closePath();
+    x.clip();
+    const sg=x.createLinearGradient(cx-flw/2,0,cx+flw/2,0);
+    sg.addColorStop(0,C.mix('soln',false,.28));
+    sg.addColorStop(.34,C.mix('soln',true,.13));
+    sg.addColorStop(1,C.mix('soln',false,.20));
+    x.fillStyle=sg;x.fillRect(cx-flw,wy,flw*2,G.MANY+10-wy);
+    const hw=wy<ntop?lerp(nw,flw,(ntop-wy)/(ntop-ftop))/2:nw/2;
+    x.beginPath();x.moveTo(cx-hw,wy-2);x.quadraticCurveTo(cx,wy+4,cx+hw,wy-2);
+    x.strokeStyle=C.a('glass',.6);x.lineWidth=1.2;x.stroke();
+    // 유리에 비친 빛 — 나팔 입구와 목에 각각 (두께가 달라 번짐도 다르다)
+    Draw.spec(x,cx-flw*.24,ftop+26,flw*.075,26,.16);
+    Draw.spec(x,cx-nw*.28,(ntop+G.MANY)/2,nw*.10,(G.MANY-ntop)*.42,.15);
+    Draw.spec(x,cx+nw*.30,(ntop+G.MANY)/2-20,nw*.06,(G.MANY-ntop)*.20,.07);
+    x.restore();
+    // 외곽선
+    x.beginPath();
+    x.moveTo(cx-flw/2,ftop);x.lineTo(cx-nw/2,ntop);x.lineTo(cx-nw/2,G.MANY+6);
+    x.moveTo(cx+flw/2,ftop);x.lineTo(cx+nw/2,ntop);x.lineTo(cx+nw/2,G.MANY+6);
+    x.strokeStyle=C.mix('glass',false,.46);x.lineWidth=1.6;x.stroke();
+  },
+
+  /* ---------- 연결관 · 받침 · 전원 장치 ---------- */
+  base(x){
+    // 실험대
+    const tg=x.createLinearGradient(0,G.TABY,0,G.TABY+22);
+    tg.addColorStop(0,C.mix('canvas-bg',true,.20));tg.addColorStop(1,C.mix('canvas-bg',true,.06));
+    CV.rr(x,44,G.TABY,G.W-88,22,4);x.fillStyle=tg;x.fill();
+    // 연결관 (두 관과 깔때기를 잇는다)
+    CV.shadow(x,G.W/2,G.MANY+G.MANH+6,190,6,.32);
+    CV.rr(x,G.LX,G.MANY,G.RX+G.TW-G.LX,G.MANH,10);
+    const mg=x.createLinearGradient(0,G.MANY,0,G.MANY+G.MANH);
+    mg.addColorStop(0,C.mix('soln',true,.16));mg.addColorStop(1,C.mix('soln',false,.30));
+    x.fillStyle=mg;x.fill();
+    x.strokeStyle=C.mix('glass',false,.46);x.lineWidth=1.6;x.stroke();
+    x.fillStyle='rgba(255,255,255,.13)';
+    CV.rr(x,G.LX+8,G.MANY+4,G.RX+G.TW-G.LX-16,3,2);x.fill();
+    // 지지 기둥
+    [G.LC-8,G.RC-8].forEach(px=>{
+      CV.rr(x,px,G.MANY+G.MANH-2,16,G.TABY-(G.MANY+G.MANH)+4,3);
+      x.fillStyle=C.mix('txt-3',false,.42);x.fill();
+      x.fillStyle='rgba(255,255,255,.12)';x.fillRect(px+2,G.MANY+G.MANH,3,G.TABY-G.MANY-G.MANH);
+    });
+  },
+  powerSupply(x){
+    const {PSX:px,PSY:py,PSW:pw,PSH:ph}=G, P=G.PS;
+    CV.shadow(x,px+pw/2,py+ph+5,pw*.5,6,.4);
+    CV.rr(x,px,py,pw,ph,7);
+    const g=x.createLinearGradient(px,py,px+pw*.4,py+ph);
+    g.addColorStop(0,C.mix('txt-3',false,.30));g.addColorStop(1,C.mix('txt-3',false,.62));
+    x.fillStyle=g;x.fill();
+    x.strokeStyle=C.mix('txt-3',false,.70);x.lineWidth=1.2;x.stroke();
+    x.fillStyle='rgba(255,255,255,.16)';CV.rr(x,px+4,py+3,pw-8,3,2);x.fill();
+    // 아래 모서리를 어둡게 — 판이 두께를 가진 것처럼 보인다
+    x.save();CV.rr(x,px,py,pw,ph,7);x.clip();
+    const bev=x.createLinearGradient(0,py+ph-14,0,py+ph);
+    bev.addColorStop(0,'rgba(0,0,0,0)');bev.addColorStop(1,'rgba(0,0,0,.32)');
+    x.fillStyle=bev;x.fillRect(px,py+ph-14,pw,14);x.restore();
+
+    // 전원 스위치 — 눌러서 켜고 끈다
+    const [sx,sy,sw,shh]=P.sw;
+    CV.rr(x,sx,sy,sw,shh,8);
+    x.fillStyle=Lab.power?C.a('h2',.26):'rgba(0,0,0,.30)';x.fill();
+    x.strokeStyle=Lab.power?C.a('h2',.85):'rgba(255,255,255,.20)';x.lineWidth=1.4;x.stroke();
+    // 켜져 있으면 표시등이 둘레로 빛을 흘린다
+    if(Lab.power)Draw.glow(x,sx+sw/2,sy+19,30,C.a('h2',.55),1);
+    x.beginPath();x.arc(sx+sw/2,sy+19,10,0,6.284);
+    x.fillStyle=Lab.power?C.v['h2']:C.mix('txt-3',true,.24);x.fill();
+    x.font='600 11px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+    x.fillStyle=Lab.power?C.a('h2',.95):'rgba(196,214,224,.62)';
+    x.fillText(Lab.power?'ON':'OFF',sx+sw/2,sy+40);
+
+    // 전압 − / +
+    const idx=VOLTS.findIndex(o=>o.v===Lab.volt);
+    [[P.vdn,'−',idx>0],[P.vup,'+',idx<VOLTS.length-1]].forEach(([b,sym,live])=>{
+      CV.rr(x,b[0],b[1],b[2],b[3],8);
+      x.fillStyle='rgba(0,0,0,.26)';x.fill();
+      x.strokeStyle=live?'rgba(255,255,255,.28)':'rgba(255,255,255,.10)';x.lineWidth=1.4;x.stroke();
+      x.font='700 22px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+      x.fillStyle=live?'rgba(214,230,238,.95)':'rgba(214,230,238,.28)';
+      x.fillText(sym,b[0]+b[2]/2,b[1]+b[3]/2+1);
+    });
+
+    // 전압 표시창
+    const [dx0,dy0,dw,dh]=P.disp;
+    CV.rr(x,dx0,dy0,dw,dh,5);x.fillStyle='#08131A';x.fill();
+    x.strokeStyle='rgba(0,0,0,.55)';x.lineWidth=1;x.stroke();
+    const on=Lab.power&&Lab.volt>=SCI.vMin&&Lab.elyte;
+    // 숫자판은 스스로 빛나는 표시창이다 — 유리 안쪽에 번짐을 깔고 숫자를 얹는다
+    if(Lab.power){
+      x.save();CV.rr(x,dx0,dy0,dw,dh,5);x.clip();
+      Draw.glow(x,dx0+dw/2,dy0+21,34,(on?C.a('h2',.5):C.a('warn',.45)),1);
+      x.restore();
+    }
+    x.fillStyle=Lab.power?(on?C.v['h2']:C.v['warn']):'rgba(140,165,180,.32)';
+    x.font='700 21px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+    x.fillText(Lab.power?String(Lab.volt):'0',dx0+dw/2,dy0+21);
+    x.font='500 10px "JetBrains Mono",monospace';
+    x.fillText('V',dx0+dw/2,dy0+39);
+
+    // 단자 — 왼쪽 (−) 파랑 / 오른쪽 (+) 빨강
+    [[302,'−','#2E6FA8'],[478,'+','#B33A2B']].forEach(([cx0,sym,col])=>{
+      const cy=py-6;
+      x.beginPath();x.arc(cx0,cy,8,0,6.284);
+      x.fillStyle=col;x.fill();
+      x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=1;x.stroke();
+      x.font='700 11px "JetBrains Mono",monospace';x.textAlign='center';x.textBaseline='middle';
+      x.fillStyle='#fff';x.fillText(sym,cx0,cy+.5);
+    });
+  },
+  wires(x){
+    const live=Lab.power&&Lab.volt>=SCI.vMin&&Lab.elyte;
+    const paths=[[G.LC,302,'h2'],[G.RC,478,'o2']];
+    paths.forEach(([sx,ex])=>{
+      x.beginPath();
+      x.moveTo(sx,G.MANY+18);
+      x.bezierCurveTo(sx,G.MANY+70,ex,G.PSY-64,ex,G.PSY-14);
+      x.strokeStyle=C.mix('cu',false,.45);x.lineWidth=6;x.lineCap='round';x.stroke();
+      x.strokeStyle=C.v['cu'];x.lineWidth=3.6;x.stroke();
+      x.strokeStyle=C.mix('cu',true,.35);x.lineWidth=1.2;x.stroke();
+    });
+    if(live){
+      x.save();x.globalAlpha=.5;
+      paths.forEach(([sx,ex,key])=>{
+        x.beginPath();x.moveTo(sx,G.MANY+18);
+        x.bezierCurveTo(sx,G.MANY+70,ex,G.PSY-64,ex,G.PSY-14);
+        x.setLineDash([7,13]);x.lineDashOffset=-(Lab.t*46)%20;
+        x.strokeStyle=C.v[key];x.lineWidth=2;x.stroke();
+      });
+      x.restore();
+    }
+  },
+
+  /* ---------- 극 이름표 ---------- */
+  poles(x,ts){
+    if(ts<0.42)return;
+    [[G.LC,'(−)극','수소 H₂','h2'],[G.RC,'(+)극','산소 O₂','o2']].forEach(([cx,p,g,key])=>{
+      x.textAlign='center';
+      x.font='600 13px Pretendard,sans-serif';x.fillStyle=C.v[key];
+      x.fillText(p,cx,G.TB+56);
+      x.font='500 11px Pretendard,sans-serif';x.fillStyle=C.a(key,.68);
+      x.fillText(g,cx,G.TB+72);
+    });
+  },
+
+  /* ---------- 입자 모형 오버레이 ---------- */
+  particles(x){
+    const mol=(cx,cy,kind,sc)=>{
+      sc=sc||1;
+      if(kind==='h2'){
+        [[-4.2,0],[4.2,0]].forEach(([dx,dy])=>{
+          x.beginPath();x.arc(cx+dx*sc,cy+dy*sc,4*sc,0,6.284);
+          x.fillStyle=C.v['h2'];x.fill();
+          x.strokeStyle=C.mix('h2',false,.4);x.lineWidth=.9;x.stroke();
+        });
+      }else if(kind==='o2'){
+        [[-5.4,0],[5.4,0]].forEach(([dx,dy])=>{
+          x.beginPath();x.arc(cx+dx*sc,cy+dy*sc,5.6*sc,0,6.284);
+          x.fillStyle=C.v['o2'];x.fill();
+          x.strokeStyle=C.mix('o2',false,.4);x.lineWidth=.9;x.stroke();
+        });
+      }else{ // 물 분자 — 산소 1 + 수소 2
+        [[-6,-4.4],[6,-4.4]].forEach(([dx,dy])=>{
+          x.beginPath();x.arc(cx+dx*sc,cy+dy*sc,3.6*sc,0,6.284);
+          x.fillStyle=C.v['h2'];x.fill();
+        });
+        x.beginPath();x.arc(cx,cy+1.6*sc,5.4*sc,0,6.284);
+        x.fillStyle=C.v['o2'];x.fill();
+        x.strokeStyle=C.mix('o2',false,.4);x.lineWidth=.9;x.stroke();
+      }
+    };
+    const seed=(i,j)=>((Math.sin(i*127.1+j*311.7)*43758.5453)%1+1)%1;
+    const vt=Lab.vt||0;
+    x.save();
+    /* ① 모인 기체 — 수소는 (−)극 관에, 산소는 (+)극 관에.
+          기포가 조금만 모여도 분자가 보이도록 칸 수를 높이에 맞춰 늘린다 */
+    x.globalAlpha=.95;
+    [['h2',G.LC,Lab.h2],['o2',G.RC,Lab.o2]].forEach(([k,cx,vol],ti)=>{
+      if(vol<0.4)return;                       // 기체가 조금이라도 있으면 분자를 그린다
+      const top=G.TT+5, bot=mlY(vol)-5, hgt=Math.max(0,bot-top);
+      const n=clamp(Math.round(hgt/26),1,8);   // 얇아도 최소 1개
+      const jit=Math.min(12,hgt/n*.45);
+      for(let i=0;i<n;i++){
+        const px=cx+(seed(i,ti)-.5)*36;
+        const py=clamp(top+hgt*(i+.5)/n+(seed(i,ti+9)-.5)*jit, G.TT+1, mlY(vol)-3);
+        mol(px+Math.cos(vt*1.1+i*1.9)*2.6, py+Math.sin(vt*1.5+i)*2.6, k, .95);
+      }
+    });
+    /* ② 아직 분해되지 않은 물 분자.
+          2H₂O → 2H₂ + O₂ 이므로 없어진 물 분자 수 = 생겨난 수소 분자 수.
+          수소가 관을 채울수록 남은 물 분자를 줄여 "물이 분해되어 사라진다"를 보여 준다. */
+    const wScale=clamp(1-Lab.h2/SCI.tubeMax,0.08,1);
+    x.globalAlpha=.58;
+    [[G.LC,Lab.h2],[G.RC,Lab.o2]].forEach(([cx,vol],ti)=>{
+      const top=mlY(vol)+16, bot=G.TB-4;
+      if(bot-top<20)return;
+      const n=Math.round(clamp((bot-top)/44,1,5)*wScale);
+      for(let i=0;i<n;i++){
+        const px=cx+(seed(i,ti+21)-.5)*32;
+        const py=top+(bot-top)*(i+.5)/n;
+        mol(px+Math.cos(vt*.9+i)*1.8, py+Math.sin(vt*1.1+i*1.7)*1.8,'h2o',.8);
+      }
+    });
+    const nMan=Math.round(6*wScale);
+    for(let i=0;i<nMan;i++){
+      const px=G.LX+30+seed(i,3)*(G.RX+G.TW-G.LX-60);
+      const py=G.MANY+9+seed(i,7)*14;
+      mol(px,py+Math.sin(vt*1.1+i*1.7)*1.6,'h2o',.8);
+    }
+    x.restore();
+  },
+
+  /* ================= 1단계 화면 ================= */
+  s1(){
+    const c=CV.ctx('cv1');if(!c)return;
+    const {x,w,h}=c;
+    x.save();
+    const ts=CV.fit(x,w,h,G.W,G.H);
+    // 실험대에 떨어지는 빛 — 장치가 놓인 자리를 잡아 준다
+    Draw.pool(x,G.W/2,G.TABY-6,330,86,'rgba(150,196,214,1)',.05);
+    Draw.base(x);
+    Draw.powerSupply(x);
+    Draw.wires(x);
+    Draw.funnel(x,(Lab.h2+Lab.o2)*G.PPM*0.15);
+    const live=Lab.power&&Lab.volt>=SCI.vMin;
+    Draw.tube(x,G.LX,Lab.h2,'h2',ts);
+    Draw.tube(x,G.RX,Lab.o2,'o2',ts);
+    x.save();
+    CV.rr(x,G.LX+G.WALL,G.TT-14,G.TW-G.WALL*2,G.TB+22-G.TT,6);x.clip();
+    Draw.electrode(x,G.LC,live,'h2');x.restore();
+    x.save();
+    CV.rr(x,G.RX+G.WALL,G.TT-14,G.TW-G.WALL*2,G.TB+22-G.TT,6);x.clip();
+    Draw.electrode(x,G.RC,live,'o2');x.restore();
+    Draw.bubbles(x);
+    if(Lab.model)Draw.particles(x);
+    Draw.stopcock(x,G.LC,false);
+    Draw.stopcock(x,G.RC,false);
+    Draw.poles(x,ts);
+    x.restore();
+    CV.mark(x,w,h);
+  }
+};
+/* ==================== 1단계 컨트롤러 ==================== */
+const POE1={
+  q:'전원을 켜면 두 관 중 <b>어느 쪽에 기체가 더 많이</b> 모일까요?',
+  o:['(−)극 쪽이 더 많다','(+)극 쪽이 더 많다','두 쪽이 똑같다'], a:0,
+  why:'물 분자 2개가 분해되면 수소 분자 2개와 산소 분자 1개가 만들어져요. 그래서 (−)극의 수소가 (+)극의 산소보다 2배 많이 모입니다.'
+};
+const OBS1={
+  q:'전압을 바꿔 가며 재어 보니 <b>부피비</b>는 어떻게 되었나요?',
+  o:['전압이 높을수록 부피비가 커졌다','전압과 상관없이 약 2 : 1로 일정했다','전압이 높을수록 부피비가 작아졌다'], a:1,
+  why:'전압은 <b>반응이 일어나는 속도</b>만 바꿔요. 물 한 분자가 쪼개지는 방식은 그대로이므로 부피비는 언제나 2 : 1입니다.',
+  lock:'💡 <b>전압을 두 가지 이상</b> 바꿔 가며 관찰한 뒤에 답해 보세요.'
+};
+
+const Step1={
+  volts(){
+    UI.el('seg-volt').innerHTML=VOLTS.map(o=>
+      `<button aria-pressed="${Lab.volt===o.v}" onclick="Lab.setVolt(${o.v})"
+        aria-label="전압 ${o.lb}">${o.lb}</button>`).join('');
+  },
+  poe(){
+    const p=App.pred1;
+    let h=`<div class="poe"><div class="q">${POE1.q}</div><div class="opts">`;
+    h+=POE1.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
+      onclick="Step1.predict(${i})"><span class="mk"></span>${o}</button>`).join('');
+    h+='</div>';
+    if(p!==null){
+      const ok=p===POE1.a;
+      h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
+        ok?'예측한 대로였어요.':`예측은 <b>${POE1.o[p]}</b>였지만, 실제로는 <b>${POE1.o[POE1.a]}</b>예요.`
+      }<br>${POE1.why}</span></div>`;
+    }
+    h+='</div>';
+    UI.el('poe1').innerHTML=h;
+  },
+  icon(ok){
+    return `<svg class="g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${
+      ok?'<path d="M20 6 9 17l-5-5"/>':'<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.2v.1"/>'}</svg>`;
+  },
+  predict(i){
+    App.pred1=i;Sfx.play('tap');Step1.poe();Step1.sync();Flow.render();
+    UI.toast('예측을 기록했어요. 이제 전원을 켜 보세요.');
+  },
+  obs(){
+    const box=UI.el('obs1');
+    const p=App.obs1;
+    // 잠그지 않는다. 아직 전압을 하나만 써 봤다면 해 보라고 권하기만 한다.
+    const tried=Object.keys(App.usedVolt).length;
+    /* 여기는 sync() 가 0.12초마다 부르는 자리다. 내용이 그대로인데도 innerHTML 을
+       갈아 끼우면 누르는 사이에 버튼이 사라져 클릭이 성립하지 않는다
+       (pointerdown 한 요소와 pointerup 한 요소가 달라진다).
+       그래서 실제로 바뀔 때만 다시 그린다. */
+    const sig=p+'|'+(tried<2?0:1);
+    if(box._sig===sig)return;
+    box._sig=sig;
+    const tip=(p===null&&tried<2)?`<div class="lock"><span>${OBS1.lock}</span></div>`:'';
+    let h=`<div class="poe"><div class="q">${OBS1.q}</div><div class="opts">`;
+    h+=OBS1.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
+      onclick="Step1.answerObs(${i})"><span class="mk"></span>${o}</button>`).join('');
+    h+='</div>';
+    if(p!==null){
+      const ok=p===OBS1.a;
+      h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
+        ok?'맞았어요.':`다시 살펴볼까요? 정답은 <b>${OBS1.o[OBS1.a]}</b>예요.`}<br>${OBS1.why}</span></div>`;
+    }
+    h+='</div>';
+    box.innerHTML=tip+h;
+  },
+  answerObs(i){
+    App.obs1=i;Sfx.play(i===OBS1.a?'ok':'no');Step1.obs();Flow.render();
+  },
+  table(){
+    const t=UI.el('tbl1'), r=App.row;
+    if(!r){
+      t.innerHTML=`<tr><td colspan="2"><div class="empty">아직 기록이 없어요.<br>기체가 모이면 <b>측정값 기록하기</b>를 한 번 눌러요.</div></td></tr>`;
+      return;
+    }
+    t.innerHTML=`<tr><th colspan="2" style="text-align:left">기록한 측정값</th></tr>
+      <tr><td>측정한 때</td><td>${Math.floor(r.t/60)}분 ${String(Math.round(r.t%60)).padStart(2,'0')}초 · ${r.volt} V</td></tr>
+      <tr><td>(−)극 수소</td><td>${fmt(r.h2)} mL</td></tr>
+      <tr><td>(+)극 산소</td><td>${fmt(r.o2)} mL</td></tr>
+      <tr><td>부피비</td><td>${r.o2>0?fmt(r.h2/r.o2,2):'—'} : 1</td></tr>`;
+  },
+  sync(){
+    const h2=Lab.read('h2'), o2=Lab.read('o2'), ra=Lab.ratio();
+    UI.el('v-h2').innerHTML=`${fmt(h2)}<span class="u">mL</span>`;
+    UI.el('v-o2').innerHTML=`${fmt(o2)}<span class="u">mL</span>`;
+    UI.el('v-ratio').textContent=ra?`${fmt(ra,2)} : 1`:'— : 1';
+    const tot=Math.max(h2+o2,.001);
+    UI.el('bar-h').style.width=(h2/tot*100)+'%';
+    UI.el('bar-o').style.width=(o2/tot*100)+'%';
+    UI.el('v-time').textContent=`${Math.floor(Lab.t/60)}분 ${String(Math.round(Lab.t%60)).padStart(2,'0')}초`;
+    const running=Lab.rate()>0;
+    UI.el('v-note').textContent=Lab.full?'포집 완료':running?`${Lab.volt} V 전기분해 중`:'전원 대기';
+    // 캔버스 배지·안내
+    UI.el('lamp1').classList.toggle('live',running);
+    UI.el('cvb1').textContent=Lab.full?'포집 완료':running?`전기분해 중 · ${Lab.volt} V`:'전원 꺼짐';
+    UI.el('cvn1').innerHTML=Lab.model
+      ? '<b>2H₂O → 2H₂ + O₂</b> — 물 분자가 쪼개지는 만큼 물은 줄어들어요.'
+      : (!Lab.elyte?'순수한 물이에요. 이온이 거의 없어 전류가 흐르지 않아요.'
+        :(Lab.power&&Lab.volt<SCI.vMin?'전압이 분해 전압(약 1.5 V)보다 낮아요.'
+        :(running?'(−)극의 기포가 (+)극의 2배로 올라와요.'
+        :'아래 전원 장치를 눌러 켜고, − + 로 전압을 바꿔요.')));
+    // 스위치·세그먼트
+    const sw=UI.el('sw-elyte');
+    sw.setAttribute('aria-pressed',String(Lab.elyte));
+    UI.el('tx-elyte').innerHTML=Lab.elyte
+      ? '수산화 나트륨 수용액<s>전류가 흘러요</s>' : '순수한 물 (증류수)<s>전류가 거의 안 흘러요</s>';
+    // 칸은 button 으로만 센다 — seg 안에는 선택 표시(i.thumb)도 들어 있다
+    UI.el('seg-volt').querySelectorAll('button').forEach((b,i)=>
+      b.setAttribute('aria-pressed',String(VOLTS[i].v===Lab.volt)));
+    UI.el('seg-speed').querySelectorAll('button').forEach((b,i)=>
+      b.setAttribute('aria-pressed',String((i?12:1)===Lab.speed)));
+    const bm=UI.el('b-model');
+    bm.setAttribute('aria-pressed',String(Lab.model));
+    bm.className=Lab.model?'btn acc sm':'btn line sm';
+    const br=UI.el('b-record');
+    br.disabled=Lab.h2<0.5;
+    br.textContent=App.row?'지금 눈금으로 다시 기록하기':'측정값 기록하기';
+    br.className=App.row?'btn line wide':'btn wide';
+    Step1.obs();
+    Flow.ctrl();
+    UI.live(`수소 ${fmt(h2)} mL, 산소 ${fmt(o2)} mL, 부피비 ${ra?fmt(ra,2):'—'} 대 1`);
+  }
+};
+
+/* ==================== 미니 그래프 ==================== */
+const Chart2={
+  c:null,
+  init(){
+    const el=UI.el('chart1');if(!el)return;
+    if(typeof Chart==='undefined'){
+      // 그래프 라이브러리를 못 불러왔다 — 자리를 비워 두지 말고 이유를 적는다
+      const hud=UI.el('hud1');
+      if(hud)hud.querySelector('.box').innerHTML=
+        '<div class="empty" style="height:100%;display:grid;place-items:center">그래프를 불러오지 못했어요.<br>측정값 표는 아래에 그대로 있어요.</div>';
+      return;
+    }
+    try{
+      Chart2.c=new Chart(el,{
+        type:'line',
+        data:{labels:[],datasets:[
+          {label:'수소',data:[],borderColor:C.v['h2'],backgroundColor:C.v['h2'],
+            pointStyle:'circle',pointRadius:3,borderWidth:2,tension:.15},
+          {label:'산소',data:[],borderColor:C.v['o2'],backgroundColor:C.v['o2'],
+            pointStyle:'triangle',pointRadius:4,borderWidth:2,tension:.15}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,animation:{duration:180},
+          plugins:{legend:{display:false},tooltip:{enabled:false}},
+          scales:{
+            x:{ticks:{color:C.v['txt-3'],font:{size:10}},grid:{color:C.a('line',.7)}},
+            y:{beginAtZero:true,ticks:{color:C.v['txt-3'],font:{size:10}},grid:{color:C.a('line',.7)}}
+          }}
+      });
+      Chart2.sync();
+    }catch(e){ UI.el('hud1').style.display='none'; }
+  },
+  /* 학생이 여러 번 기록하지 않아도 되도록, 실험이 도는 동안 자동으로 쌓인 표본을 그린다 */
+  sync(){
+    if(!Chart2.c)return;
+    try{
+      const s=Lab.series;
+      Chart2.c.data.labels=s.map(r=>(r.t/60).toFixed(r.t<600?1:0)+'분');
+      Chart2.c.data.datasets[0].data=s.map(r=>+r.h2.toFixed(1));
+      Chart2.c.data.datasets[1].data=s.map(r=>+r.o2.toFixed(1));
+      Chart2.c.update('none');
+    }catch(e){}
+  },
+  theme(){
+    if(!Chart2.c)return;
+    try{
+      const o=Chart2.c.options.scales;
+      o.x.ticks.color=o.y.ticks.color=C.v['txt-3'];
+      o.x.grid.color=o.y.grid.color=C.a('line',.7);
+      Chart2.c.data.datasets[0].borderColor=Chart2.c.data.datasets[0].backgroundColor=C.v['h2'];
+      Chart2.c.data.datasets[1].borderColor=Chart2.c.data.datasets[1].backgroundColor=C.v['o2'];
+      Chart2.c.update();
+    }catch(e){}
+  }
+};
+
+/* ==================== 2단계 · 기체 확인 ==================== */
+const POE2={
+  q:'<b>(−)극</b>에 모인 기체는 무엇일까요?',
+  o:['수소','산소','이산화 탄소','질소'], a:0,
+  why:'(−)극에서는 물이 전자를 얻어 <b>수소</b>가 생겨요. 수소는 스스로 잘 타는 가연성 기체라 성냥불을 대면 “퍽” 소리를 냅니다.'
+};
+const TOOLS=[
+  {id:'match', t:'성냥불',        d:'화면에서 끌어다 대거나, 눌러도 돼요'},
+  {id:'ember', t:'꺼져가는 향불', d:'화면에서 끌어다 대거나, 눌러도 돼요'}
+];
+/* 결과 — 옳은 짝만 기체를 확정한다. s 는 2×2 관찰표에 들어갈 짧은 말 */
+const TESTRES={
+  'h2:match':{ok:true, fx:'pop',   s:'퍽! 하고 탐',
+    t:'“퍽!” 소리를 내며 순간 타올랐어요.',
+    d:'수소는 스스로 잘 타는 <b>가연성</b> 기체예요. → (−)극 기체는 <b>수소(H₂)</b>입니다.',
+    x:'관 안쪽에 <b>물방울</b>이 맺혔어요. 수소가 타면 물이 생기거든요.'},
+  /* 수소 + 향불 — 관 안에서는 산소가 없어 불씨가 꺼진다.
+     다만 입구에서는 새어 나온 수소가 공기와 만나 잠깐 타기도 한다
+     (불씨 700 ℃ 안팎 > 수소 발화점 약 500~570 ℃).
+     "촛불을 수소 병 입구에 대면 기체는 입구에서 타고, 안으로 넣으면 촛불이 꺼진다"는
+     고전 시연과 같은 상황이다. */
+  'h2:ember':{ok:false, fx:'out',  s:'불씨는 꺼짐', xi:'🔎',
+    t:'입구에서 잠깐 불이 붙더니, 불씨는 사그라들어 꺼졌어요.',
+    d:'수소는 <b>스스로 타는</b> 기체일 뿐, 다른 물질이 타는 것을 돕지는 못해요. 관 안에는 산소가 없어 불씨가 꺼집니다.',
+    x:'입구에서 잠깐 탄 건 <b>수소 자신</b>이에요. 공기와 만나는 자리라 불이 붙거든요. 그래도 “퍽” 소리는 <b>성냥불</b>일 때만 납니다.'},
+  'o2:ember':{ok:true, fx:'flare', s:'활활 되살아남',
+    t:'불씨가 다시 활활 타올랐어요.',
+    d:'산소는 다른 물질이 잘 타도록 돕는 <b>조연성</b> 기체예요. → (+)극 기체는 <b>산소(O₂)</b>입니다.'},
+  'o2:match':{ok:false, fx:'bright', s:'더 밝게 탐',
+    t:'성냥불이 더 밝게 탔지만 “퍽” 소리는 나지 않았어요.',
+    d:'산소는 스스로 타지 않아요. 꺼져가는 향불로 확인하면 성질이 뚜렷하게 보입니다.'}
+};
+
+/* ---------- 2단계 무대 기하 (설계 공간 680 × 540) ----------
+   관을 한가운데 세우고, 성냥은 왼쪽 아래·향불은 오른쪽 아래에 실물처럼 놓는다.
+   학생은 마개를 연 뒤 도구를 집어 관 입구까지 끌어다 대야 한다. */
+const G2={
+  W:680, H:540,
+  TX:281, TW:118,        // 관 — 중심 340 = W/2. 눈금관답게 홀쭉하게
+  TT:120, TB:414,
+  DESK:470,              // 실험대 상면
+  ZONE:78                // 입구 판정 반지름
+};
+G2.CX=G2.TX+G2.TW/2;
+G2.MOUTH={x:G2.CX, y:G2.TT-32};
+/* 도구 정지 자리 — tip 은 불꽃/불씨가 있는 끝, rot 은 자루가 뻗는 방향 */
+G2.REST={
+  match:{x:158, y:406, rot:2.55, len:74},   // 관 왼쪽 아래, 성냥갑에 걸쳐 놓임
+  ember:{x:525, y:404, rot:0.58, len:76}    // 관 오른쪽 아래, 향 받침에 꽂힘
+};
+G2.BOX={x:103, y:454};   // 성냥갑 중심
+G2.CEN={x:580, y:457};   // 향 받침 중심
+
+/* 확인 동작은 구간으로 나뉜다 — 도구가 다가가는 동안에는 아무 일도 일어나지 않고,
+   관 입구에 닿은 뒤에야 반응이 시작된다. */
+const T_MOVE=0.55, T_REACT=0.95, T_BACK=0.42;
+const T_PULL=58;   // 마개를 이만큼(설계 px) 위로 끌어 놓으면 열린다
+const ease3=t=>1-Math.pow(1-t,3);
+
+const Test={
+  tube:'h2', open:{h2:false,o2:false},
+  /* idle: 도구가 제자리 / cork: 마개 끌기 / drag: 도구 끌기
+     approach: 버튼으로 자동 접근 / react: 반응 / back: 제자리로 복귀 */
+  phase:'idle',
+  t:0, tool:null, last:null, fxKind:null,
+  sounded:false, revealed:false,
+  hold:null,          // 손에 든 도구 {x,y,vx,vy}
+  from:null,          // back 구간 시작점
+  near:0,             // 입구 근접도 0~1
+  scale:1,            // 마지막 포인터의 화면 배율 — 터치 판정을 키우는 데 쓴다
+  drag:null, shake:0, // 마개 끌기
+  cork:{h2:0,o2:0},   // 뽑힌 마개가 실험대에 눕는 진행도
+  drops:[],           // 수소가 탄 뒤 관 안쪽에 맺히는 물방울
+  coach:2,            // 첫 진입 안내 (남은 표시 횟수)
+
+  react(){ return Test.phase==='react'?clamp(Test.t/T_REACT,0,1):0; },
+
+  /* 도구의 지금 위치 — 네 갈래 경로가 모두 여기로 모인다 */
+  spot(id){
+    const r=G2.REST[id], M=G2.MOUTH;
+    if(id!==Test.tool||Test.phase==='idle'||Test.phase==='cork')
+      return {x:r.x, y:r.y, rot:r.rot, lift:0};
+    if(Test.phase==='drag'&&Test.hold){
+      const h=Test.hold;
+      // 입구에 가까우면 살짝 빨려 들어가듯 붙는다
+      const k=Test.near*Test.near*0.55;
+      return {x:lerp(h.x,M.x,k), y:lerp(h.y,M.y,k),
+              rot:r.rot-clamp(h.vx*0.0016,-0.34,0.34), lift:1, vx:h.vx};
+    }
+    if(Test.phase==='approach'){
+      const e=ease3(clamp(Test.t/T_MOVE,0,1));
+      return {x:lerp(r.x,M.x,e), y:lerp(r.y,M.y,e), rot:r.rot, lift:1};
+    }
+    if(Test.phase==='react') return {x:M.x, y:M.y, rot:r.rot, lift:1};
+    if(Test.phase==='back'){
+      const e=ease3(clamp(Test.t/T_BACK,0,1)), f=Test.from||M;
+      return {x:lerp(f.x,r.x,e), y:lerp(f.y,r.y,e), rot:r.rot, lift:1-e};
+    }
+    return {x:r.x, y:r.y, rot:r.rot, lift:0};
+  },
+  /* 도구를 집을 수 있는 자리 — 자루 한가운데 */
+  handle(id){
+    const r=G2.REST[id];
+    return {x:r.x+Math.cos(r.rot)*r.len*0.5, y:r.y+Math.sin(r.rot)*r.len*0.5};
+  },
+
+  poe(){
+    const p=App.pred2;
+    let h=`<div class="poe"><div class="q">${POE2.q}</div><div class="opts">`;
+    h+=POE2.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
+      onclick="Test.predict(${i})"><span class="mk"></span>${o}</button>`).join('');
+    h+='</div>';
+    if(p!==null){
+      const ok=p===POE2.a;
+      h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
+        ok?'예측한 대로예요.':`예측은 <b>${POE2.o[p]}</b>였어요. 실제로는 <b>수소</b>랍니다.`}<br>${POE2.why}</span></div>`;
+    }
+    h+='</div>';
+    UI.el('poe2').innerHTML=h;
+  },
+  predict(i){ App.pred2=i;Sfx.play('tap');Test.poe();Test.sync(); },
+  pickTube(t){
+    if(Test.tube===t)return;
+    Test.tube=t;Test.last=null;Test.phase='idle';Test.t=0;Test.hold=null;
+    Test.revealed=false;Test.drops.length=0;Parts.clear();Sfx.play('tap');Test.sync();
+  },
+  openCock(){
+    Test.open[Test.tube]=true;Test.drag=null;Test.coach=0;
+    Sfx.play('cork');
+    UI.toast('고무마개를 열었어요. 이제 <b>도구를 끌어다</b> 관 입구에 대 보세요.');
+    UI.live('고무마개를 열었습니다. 도구를 관 입구에 가져다 대세요.');
+    Test.sync();
+  },
+  /* 사이드 버튼 경로 — 캔버스 드래그를 못 쓰는 학생을 위해 남겨 둔다 */
+  use(id){
+    if(!Test.open[Test.tube]){ UI.toast('먼저 고무마개를 당겨 열어 주세요.'); return; }
+    if(Test.phase!=='idle')return;
+    Test.begin(id,'approach');
+  },
+  begin(id,phase){
+    const key=Test.tube+':'+id;
+    if(!TESTRES[key])return;
+    Test.tool=id;Test.fxKind=TESTRES[key].fx;Test.last=key;
+    Test.t=0;Test.phase=phase;Test.sounded=false;Test.revealed=false;
+    Test.coach=0;
+    if(id==='match'&&phase==='approach')Sfx.play('strike');
+    Test.sync();          // 결과 문구는 아직 뜨지 않는다 (revealed=false)
+  },
+  /* 도구가 관 입구에 닿는 순간 — 소리와 결과를 여기서 처음 낸다 */
+  onArrive(){
+    const r=TESTRES[Test.last];if(!r)return;
+    Sfx.play(r.fx==='pop'?'pop':r.fx==='flare'?'flare':r.fx==='out'?'hiss':'tap');
+    Parts.burst(G2.MOUTH.x,G2.MOUTH.y,r.fx);
+    if(r.fx==='pop')Test.wet();          // 수소가 타면 관 안쪽에 물이 맺힌다
+    App.tried[Test.last]=1;
+    if(!App.testLog.some(e=>e.tube===Test.tube&&e.tool===Test.tool))
+      App.testLog.push({tube:Test.tube,tool:Test.tool,text:r.t,ok:r.ok});
+    if(r.ok&&!App.tested[Test.tube]){
+      App.tested[Test.tube]=Test.tool;
+      setTimeout(()=>Sfx.play('ok'),700);
+      if(App.tested.h2&&App.tested.o2)
+        setTimeout(()=>UI.toast('두 기체를 모두 확인했어요. 다음 단계로 가 볼까요?'),1200);
+    }
+    Test.revealed=true;Test.sync();Flow.render();
+    UI.live(r.t.replace(/<[^>]+>/g,''));
+  },
+  /* 관 안쪽에 맺히는 물방울 */
+  wet(){
+    const n=App.reduced?6:(App.lowSpec?10:16);
+    for(let i=0;i<n;i++){
+      const left=Math.random()<.5;
+      Test.drops.push({
+        x:left?G2.TX+12+Math.random()*26:G2.TX+G2.TW-38+Math.random()*26,
+        y:G2.TT+10+Math.random()*90,
+        r:1.4+Math.random()*2.1, v:0, wait:Math.random()*1.4, a:0
+      });
+    }
+  },
+  /* --- 캔버스 조작 ---
+     작은 화면에서는 설계 좌표 1 px 이 실제로는 0.5 px 도 안 된다.
+     그래서 판정 크기를 화면 배율(p.s)로 나눠, 손가락 기준 44 px 아래로 내려가지 않게 한다. */
+  grow(p,base,phys){
+    const s=(p&&p.s)||1;
+    return Math.max(base,phys/s);
+  },
+  hitCock(p){
+    if(Test.open[Test.tube]||!p)return false;
+    const w=Test.grow(p,48,26), h=Test.grow(p,36,24);
+    return Math.abs(p.x-G2.CX)<=w && p.y>=G2.TT-38-h && p.y<=G2.TT-2;
+  },
+  hitTool(p){
+    if(!p)return null;
+    let best=null,bd=1e9;
+    for(const t of TOOLS){
+      const h=Test.handle(t.id);
+      const d=Math.hypot(p.x-h.x,p.y-h.y);
+      if(d<bd){bd=d;best=t.id;}
+    }
+    return bd<=Test.grow(p,58,26)?best:null;
+  },
+  /* 입구 판정 반지름도 같은 방식으로 넉넉하게 */
+  zoneR(){ return Math.max(G2.ZONE, 34/(Test.scale||1)); },
+  pick(p,cv,e){
+    if(p&&p.s)Test.scale=p.s;
+    if(Test.phase!=='idle')return false;
+    if(Test.hitCock(p)){
+      Test.phase='cork';Test.drag={y0:p.y,off:0};
+      try{cv.setPointerCapture(e.pointerId);}catch(_){}
+      cv.style.cursor='grabbing';return true;
+    }
+    const id=Test.hitTool(p);
+    if(!id)return false;
+    if(!Test.open[Test.tube]){
+      UI.toast('먼저 고무마개를 당겨 열어 주세요.');Test.shake=.5;Sfx.play('tap');return true;
+    }
+    const h=Test.handle(id), r=G2.REST[id];
+    Test.tool=id;Test.phase='drag';Test.coach=0;
+    // 손가락으로 잡은 지점과 도구 끝의 차이를 유지한다
+    Test.hold={x:r.x+(p.x-h.x), y:r.y+(p.y-h.y), vx:0, vy:0, gx:p.x-h.x, gy:p.y-h.y};
+    Test.near=0;
+    try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    cv.style.cursor='grabbing';
+    Sfx.play('grab');
+    if(id==='match')setTimeout(()=>Sfx.play('strike'),90);   // 집으면서 그어 붙인 느낌
+    return true;
+  },
+  move(p){
+    if(!p)return;
+    if(p.s)Test.scale=p.s;
+    if(Test.phase==='cork'&&Test.drag){
+      Test.drag.off=clamp(Test.drag.y0-p.y,0,92);   // 위로만 끌린다
+    }else if(Test.phase==='drag'&&Test.hold){
+      const h=Test.hold;
+      const nx=clamp(p.x-h.gx,26,G2.W-26), ny=clamp(p.y-h.gy,34,G2.DESK-8);
+      h.vx=(nx-h.x)*60; h.vy=(ny-h.y)*60;   // 불꽃이 뒤로 눕는 정도에 쓴다
+      h.x=nx;h.y=ny;
+      const d=Math.hypot(h.x-G2.MOUTH.x,h.y-G2.MOUTH.y);
+      Test.near=clamp(1-d/Test.zoneR(),0,1);
+    }
+  },
+  drop(){
+    if(Test.phase==='cork'){
+      const off=Test.drag?Test.drag.off:0;
+      Test.drag=null;Test.phase='idle';
+      if(off>=T_PULL)Test.openCock();
+      else{ Test.shake=.5;Sfx.play('tap');
+        if(off>8)UI.toast('조금 더 위로 끌어 주세요.'); }
+      return;
+    }
+    if(Test.phase!=='drag')return;
+    const hit=Test.near>0;
+    if(hit){
+      const id=Test.tool;
+      Test.begin(id,'react');
+      Test.sounded=true;Test.onArrive();
+    }else{
+      const s=Test.spot(Test.tool);
+      Test.from={x:s.x,y:s.y};Test.phase='back';Test.t=0;
+      Sfx.play('place');
+    }
+    Test.hold=null;Test.near=0;
+  },
+  /* 관 하나를 처음 상태로 — 반복 실험용 */
+  again(){
+    Test.open[Test.tube]=false;Test.cork[Test.tube]=0;
+    Test.last=null;Test.revealed=false;Test.phase='idle';Test.t=0;
+    Test.hold=null;Test.drops.length=0;Parts.clear();
+    Sfx.play('tap');UI.toast('마개를 다시 끼웠어요. 처음부터 해 볼까요?');
+    Test.sync();
+  },
+
+  /* 2×2 관찰표 — 네 조합을 모두 해 보도록 이끈다 (완료 판정은 정답 2개 그대로) */
+  matrix(){
+    const rows=[['h2','(−)극'],['o2','(+)극']];
+    let h='<table class="mat"><tr><td class="cn"></td><th>성냥불</th><th>꺼져가는 향불</th></tr>';
+    for(const [tb,lb] of rows){
+      h+=`<tr><th>${lb}</th>`;
+      for(const tool of ['match','ember']){
+        const k=tb+':'+tool, r=TESTRES[k], done=App.tried[k];
+        h+=done
+          ? `<td class="${r.ok?'ok':'no'}"><b>${r.ok?'✓':'·'}</b>${r.s}</td>`
+          : '<td class="todo">—</td>';
+      }
+      h+='</tr>';
+    }
+    h+='</table>';
+    const n=Object.keys(App.tried).length;
+    h+=`<div class="mat-n">${n} / 4 가지 조합을 해 봤어요${
+      n>=4?' — 가연성과 조연성의 차이가 보이나요?':''}</div>`;
+    return h;
+  },
+
+  sync(){
+    UI.el('seg-tube').querySelectorAll('button').forEach((b,i)=>
+      b.setAttribute('aria-pressed',String((i?'o2':'h2')===Test.tube)));
+    const opened=Test.open[Test.tube], busy=Test.phase!=='idle';
+    let h='';
+    if(!opened){
+      h=`<button class="tool" onclick="Test.openCock()">
+        <svg class="g" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v7"/><path d="M8.5 6.5 12 3l3.5 3.5"/><rect x="6" y="11" width="12" height="6" rx="2"/></svg>
+        <span><span class="t">고무마개 열기</span><span class="d">화면에서 마개를 위로 끌어도 열려요</span></span></button>`;
+    }else{
+      h=TOOLS.map(t=>{
+        const done=App.tried[Test.tube+':'+t.id];
+        return `<button class="tool" aria-pressed="${Test.tool===t.id&&Test.last===Test.tube+':'+t.id}"
+          ${busy?'disabled':''} onclick="Test.use('${t.id}')">
+          ${Test.gfx(t.id)}
+          <span><span class="t">${t.t}</span><span class="d">${t.d}</span></span>
+          ${done?'<span class="done">✓</span>':''}</button>`;
+      }).join('')
+      +`<button class="btn line sm" style="margin-top:2px" onclick="Test.again()">마개 다시 끼우고 처음부터</button>`;
+    }
+    UI.el('tools2').innerHTML=h;
+    // 결과 — 도구가 관에 닿은 뒤에만 보여 준다
+    const r=(Test.revealed&&Test.last)?TESTRES[Test.last]:null;
+    UI.el('res2').innerHTML=r
+      ? `<div class="res ${r.ok?'ok':'no'}">${Step1.icon(r.ok)}<span><b>${r.t}</b><br>${r.d}${
+          r.x?`<br><span class="ex">${r.xi||'💧'} ${r.x}</span>`:''}</span></div>`
+      : '';
+    UI.el('mat2').innerHTML=Test.matrix();
+    const side=Test.tube==='h2'?'(−)극':'(+)극';
+    UI.el('cvb2').textContent=`${side} 관 · ${opened?'열림':'닫힘'}`;
+    UI.el('cvn2').innerHTML=App.tested.h2&&App.tested.o2
+      ? '두 기체를 모두 확인했어요. 성질이 서로 완전히 달라요.'
+      : (opened?'성냥불이나 향불을 <b>끌어서</b> 관 입구에 대세요.':'고무마개를 <b>위로 끌어</b> 열어요.');
+    UI.el('lamp2').classList.toggle('live',!!(App.tested.h2&&App.tested.o2));
+    Flow.ctrl();
+  },
+  gfx(id){
+    return id==='match'
+      ? `<svg class="g" viewBox="0 0 34 34" fill="none"><path d="M9 30h18" stroke="#8A6552" stroke-width="4" stroke-linecap="round"/><path d="M22 27 9 30" stroke="#C9A487" stroke-width="4" stroke-linecap="round"/><path d="M25 6c3 4 4 6 4 9a4.5 4.5 0 0 1-9 0c0-3 2-5 5-9z" fill="#E8672E"/><path d="M25 11c1.4 2 2 3 2 4.4a2.1 2.1 0 0 1-4.2 0c0-1.5 1-2.6 2.2-4.4z" fill="#F5C36B"/></svg>`
+      : `<svg class="g" viewBox="0 0 34 34" fill="none"><path d="M5 26h20" stroke="#6E5044" stroke-width="3.4" stroke-linecap="round"/><circle cx="26" cy="25" r="3.4" fill="#E8672E"/><path d="M26 19c.5-3 1-4.5 0-7" stroke="#8FA3AF" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg>`;
+  },
+  /* 매 프레임 — loop() 에서 부른다 */
+  step(dt){
+    if(Test.shake>0)Test.shake=Math.max(0,Test.shake-dt*3.4);
+    // 마개가 뽑히면 실험대로 눕는 애니메이션
+    const k=Test.tube;
+    if(Test.open[k]&&Test.cork[k]<1)Test.cork[k]=Math.min(1,Test.cork[k]+dt*2.6);
+    // 물방울 — 잠깐 맺혔다가 흘러내린다
+    for(let i=Test.drops.length-1;i>=0;i--){
+      const d=Test.drops[i];
+      d.a=Math.min(1,d.a+dt*2.2);
+      if(d.wait>0){d.wait-=dt;continue;}
+      d.v+=6*dt; d.y+=d.v*dt;
+      if(d.y>G2.TB-14)Test.drops.splice(i,1);
+    }
+    if(Test.phase==='approach'){
+      Test.t+=dt;
+      if(Test.t>=T_MOVE&&!Test.sounded){ Test.sounded=true;Test.phase='react';Test.t=0;Test.onArrive(); }
+    }else if(Test.phase==='react'){
+      Test.t+=dt;
+      if(Test.t>=T_REACT){
+        Test.from={x:G2.MOUTH.x,y:G2.MOUTH.y};
+        Test.phase='back';Test.t=0;
+      }
+    }else if(Test.phase==='back'){
+      Test.t+=dt;
+      if(Test.t>=T_BACK){ Test.phase='idle';Test.t=0;Test.from=null;Test.sync(); }
+    }
+    Parts.step(dt);
+  }
+};
+
+/* ==================== 입자 — 불똥 · 연기 · 파문 ==================== */
+const Parts={
+  a:[],
+  cap(){ return App.reduced?16:(App.lowSpec?46:130); },
+  add(o){ if(Parts.a.length<Parts.cap())Parts.a.push(o); },
+  clear(){ Parts.a.length=0; },
+  spark(x,y,n,spd,col){
+    for(let i=0;i<n;i++){
+      const a=Math.random()*6.284, v=spd*(.35+Math.random()*.9);
+      Parts.add({k:'s', x,y, vx:Math.cos(a)*v, vy:Math.sin(a)*v-spd*.25,
+        r:1+Math.random()*1.8, age:0, life:.5+Math.random()*.7, c:col});
+    }
+  },
+  smoke(x,y,n,up){
+    for(let i=0;i<n;i++)
+      Parts.add({k:'m', x:x+(Math.random()-.5)*10, y, vx:(Math.random()-.5)*10,
+        vy:-(up||24)*(.6+Math.random()*.7), r:3+Math.random()*4,
+        age:0, life:1.1+Math.random()*1.1, ph:Math.random()*6.28});
+  },
+  ring(x,y,r0,r1,col,life){
+    Parts.add({k:'r', x,y, r0, r1, c:col, age:0, life:life||.5});
+  },
+  /* 확인 순간에 뿌리는 한 벌 */
+  burst(x,y,kind){
+    const lo=App.reduced;
+    if(kind==='pop'){
+      Parts.ring(x,y,14,lo?70:150,'rgba(255,236,190,',.42);
+      Parts.ring(x,y,8,lo?46:104,'rgba(127,216,236,',.62);
+      Parts.spark(x,y,lo?6:18,190,'#FFD79A');
+      Parts.smoke(x,y-6,lo?2:6,30);
+    }else if(kind==='flare'){
+      Parts.spark(x,y,lo?5:14,110,'#FFB463');
+      Parts.smoke(x,y-22,lo?1:3,26);   // 불씨 위쪽에서 피어오르게 — 불빛을 가리지 않는다
+    }else if(kind==='bright'){
+      Parts.spark(x,y,lo?3:7,70,'#FFCE8A');
+    }else{
+      Parts.smoke(x,y-2,lo?3:8,30);
+    }
+  },
+  step(dt){
+    for(let i=Parts.a.length-1;i>=0;i--){
+      const p=Parts.a[i];
+      p.age+=dt;
+      if(p.age>=p.life){Parts.a.splice(i,1);continue;}
+      if(p.k==='s'){ p.vy+=210*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vx*=.985; }
+      else if(p.k==='m'){ p.ph+=dt*1.7; p.x+=(p.vx+Math.sin(p.ph)*7)*dt; p.y+=p.vy*dt;
+        p.vy*=.986; p.r+=7*dt; }
+    }
+  },
+  /* 연기는 불빛 아래에, 불똥과 충격파는 불빛 위에 — 회색이 불꽃을 덮지 않도록 */
+  drawUnder(x){
+    for(const p of Parts.a){
+      if(p.k!=='m')continue;
+      const u=p.age/p.life;
+      x.save();x.globalAlpha=(1-u)*.20;
+      x.beginPath();x.arc(p.x,p.y,p.r,0,6.284);
+      x.fillStyle='rgb(168,186,196)';x.fill();x.restore();
+    }
+  },
+  draw(x){
+    for(const p of Parts.a){
+      if(p.k==='m')continue;
+      const u=p.age/p.life;
+      if(p.k==='s'){
+        x.save();x.globalAlpha=(1-u)*.95;x.globalCompositeOperation='lighter';
+        x.beginPath();x.arc(p.x,p.y,p.r*(1-u*.4),0,6.284);x.fillStyle=p.c;x.fill();x.restore();
+      }else{
+        // 충격파 링 — 색의 알파만 쓰고 globalAlpha 는 건드리지 않는다 (두 번 곱해지면 안 보인다)
+        const r=lerp(p.r0,p.r1,ease3(u));
+        x.save();x.globalCompositeOperation='lighter';
+        x.strokeStyle=p.c+((1-u)*(1-u)*.95).toFixed(3)+')';
+        x.lineWidth=Math.max(.8,4.6*(1-u));
+        x.beginPath();x.arc(p.x,p.y,r,0,6.284);x.stroke();x.restore();
+      }
+    }
+  }
+};
+
+/* ---------- 2단계 캔버스 ---------- */
+Draw.s2=function(){
+  const c=CV.ctx('cv2');if(!c)return;
+  const {x,w,h}=c;
+  x.save();
+  const ts=CV.fit(x,w,h,G2.W,G2.H);
+  const key=Test.tube, cx=G2.CX, T=Lab.vt||0;
+  const vol=key==='h2'?Lab.h2:Lab.o2;
+  const frac=clamp(vol/(key==='h2'?SCI.tubeMax:SCI.tubeMax/2),0,1);
+  const gasBot=G2.TT+(G2.TB-G2.TT)*clamp(frac*0.72,0.12,0.8);
+  const opened=Test.open[key];
+  const rx=Test.react();
+
+  // 실험대 위에 떨어지는 빛 — 무대가 허공에 뜨지 않게 잡아 준다
+  Draw.pool(x,G2.CX,G2.DESK-4,300,74,'rgba(150,196,214,1)',.055);
+  Draw.desk2(x);
+  Draw.stand2(x);
+  Draw.matchbox(x);
+  Draw.censer(x);
+
+  // 관은 클램프에 매달려 있으므로 그림자는 공중이 아니라 실험대 위에 떨어진다
+  CV.shadow(x,cx,G2.DESK+3,G2.TW*.52,6,.30);
+  const W2=8;                       // 유리 두께
+  const ty=G2.TT-14, th=G2.TB+10-ty;
+  // 관 내부
+  x.save();
+  CV.rr(x,G2.TX,ty,G2.TW,th,12);x.clip();
+  const bgg=x.createLinearGradient(G2.TX,0,G2.TX+G2.TW,0);
+  bgg.addColorStop(0,C.mix('canvas-bg',true,.17));
+  bgg.addColorStop(.45,C.mix('canvas-bg',true,.05));
+  bgg.addColorStop(1,C.mix('canvas-bg',true,.12));
+  x.fillStyle=bgg;x.fillRect(G2.TX,ty,G2.TW,th);
+  // 기체
+  const gg=x.createLinearGradient(G2.TX,0,G2.TX+G2.TW,0);
+  gg.addColorStop(0,C.a(key,.30));gg.addColorStop(.5,C.a(key,.15));gg.addColorStop(1,C.a(key,.25));
+  x.fillStyle=gg;x.fillRect(G2.TX+W2,ty,G2.TW-W2*2,gasBot-ty);
+  // 수용액
+  const sg=x.createLinearGradient(G2.TX,0,G2.TX+G2.TW,0);
+  sg.addColorStop(0,C.mix('soln',false,.30));
+  sg.addColorStop(.34,C.mix('soln',true,.14));
+  sg.addColorStop(1,C.mix('soln',false,.22));
+  x.fillStyle=sg;x.fillRect(G2.TX+W2,gasBot,G2.TW-W2*2,G2.TB-gasBot+20);
+  x.beginPath();x.moveTo(G2.TX+W2,gasBot-5);
+  x.quadraticCurveTo(cx,gasBot+8,G2.TX+G2.TW-W2,gasBot-5);
+  x.strokeStyle=C.a('glass',.7);x.lineWidth=2;x.stroke();
+  // 수소가 탄 뒤 맺힌 물방울
+  Draw.drops(x);
+  // 유리 벽
+  const lw=x.createLinearGradient(G2.TX,0,G2.TX+W2,0);
+  lw.addColorStop(0,C.a('glass',.28));lw.addColorStop(.55,C.a('glass',.60));lw.addColorStop(1,C.a('glass',.09));
+  x.fillStyle=lw;x.fillRect(G2.TX,ty,W2,th);
+  const rw=x.createLinearGradient(G2.TX+G2.TW-W2,0,G2.TX+G2.TW,0);
+  rw.addColorStop(0,C.a('glass',.08));rw.addColorStop(.5,C.a('glass',.24));rw.addColorStop(1,C.a('glass',.38));
+  x.fillStyle=rw;x.fillRect(G2.TX+G2.TW-W2,ty,W2,th);
+  Draw.spec(x,G2.TX+G2.TW*.26,ty+th*.42,G2.TW*.10,th*.40,.20);
+  Draw.spec(x,G2.TX+G2.TW*.79,ty+th*.28,G2.TW*.055,th*.16,.09);
+  x.restore();
+  Draw.ticks2(x,ts);
+  CV.rr(x,G2.TX,ty,G2.TW,th,12);
+  x.strokeStyle=C.mix('glass',false,.46);x.lineWidth=2;x.stroke();
+  // 열린 입구 — 마개가 빠지면 관 테두리가 드러난다
+  if(opened){
+    x.save();
+    x.beginPath();x.ellipse(cx,ty+2,G2.TW/2-1,7,0,0,6.284);
+    x.strokeStyle=C.a('glass',.85);x.lineWidth=2;x.stroke();
+    x.beginPath();x.ellipse(cx,ty+2,G2.TW/2-W2,5,0,0,6.284);
+    x.fillStyle=C.mix('canvas-bg',false,.35);x.fill();
+    x.restore();
+  }
+
+  // 기체 이름표
+  x.textAlign='center';x.font='600 15px Pretendard,sans-serif';x.fillStyle=C.v[key];
+  x.fillText(key==='h2'?'(−)극 · 수소':'(+)극 · 산소',cx,G2.TB+36);
+  x.font='500 12px "JetBrains Mono",monospace';x.fillStyle=C.a(key,.7);
+  x.fillText(`${fmt(key==='h2'?Lab.read('h2'):Lab.read('o2'))} mL`,cx,G2.TB+53);
+
+  // 고무마개 — 닫혀 있으면 위로 끌어 열고, 열렸으면 실험대에 눕는다
+  if(!opened)Draw.cork(x,T);
+  else Draw.corkLaid(x,Test.cork[key]);
+
+  // 드롭 링 — 도구를 끄는 동안에만. 도구보다 먼저 그려 도구를 덮지 않게 한다
+  if(Test.phase==='drag')Draw.zone(x,Test.near,T);
+
+  // 도구 두 개 — 성냥은 왼쪽 아래, 향불은 오른쪽 아래
+  for(const t of TOOLS){
+    const act=(t.id===Test.tool&&Test.phase!=='idle'&&Test.phase!=='cork');
+    Draw.tool(x,Test.spot(t.id),t.id,T,act?Test.fxKind:null,act&&rx>0);
+  }
+
+  // 반응 효과 — 연기는 불빛 아래, 불똥·충격파는 위
+  Parts.drawUnder(x);
+  if(rx>0){
+    Draw.fx(x,G2.MOUTH.x,G2.MOUTH.y,Test.fxKind,rx);
+    Draw.spill(x,Test.fxKind,rx);
+  }
+  Parts.draw(x);
+
+  // 안내
+  if(Test.coach>0&&Test.phase==='idle')Draw.coach2(x,opened,T);
+
+  x.restore();
+  CV.mark(x,w,h);
+};
+
+/* 2단계 관의 눈금 — 1단계와 같은 관이라는 것을 눈으로 잇는다 */
+Draw.ticks2=function(x,ts){
+  const top=G2.TT, bot=G2.TB-6, ex=G2.TX+8;
+  const dense=ts>=.9?1:(ts>=.62?5:10);
+  x.save();
+  x.font='500 9px "JetBrains Mono",monospace';x.textBaseline='middle';x.textAlign='right';
+  for(let v=0;v<=SCI.tubeMax;v++){
+    if(dense===5&&v%5)continue;
+    if(dense===10&&v%10)continue;
+    const y=top+(bot-top)*(v/SCI.tubeMax), big=v%10===0, mid=v%5===0;
+    x.beginPath();x.moveTo(ex,y);x.lineTo(ex+(big?13:mid?9:5),y);
+    x.strokeStyle=C.a('glass',big?.85:mid?.55:.34);
+    x.lineWidth=big?1.4:1;x.stroke();
+    if(big&&ts>=.5){ x.fillStyle=C.a('glass',.78);x.fillText(String(v),G2.TX-5,y); }
+  }
+  x.restore();
+};
+/* 실험대 */
+Draw.desk2=function(x){
+  const y=G2.DESK;
+  const g=x.createLinearGradient(0,y,0,y+30);
+  g.addColorStop(0,C.mix('canvas-bg',true,.22));
+  g.addColorStop(1,C.mix('canvas-bg',true,.07));
+  CV.rr(x,26,y,G2.W-52,30,5);x.fillStyle=g;x.fill();
+  x.strokeStyle=C.a('glass',.16);x.lineWidth=1;x.stroke();
+  x.save();x.globalAlpha=.5;x.strokeStyle=C.a('glass',.24);x.lineWidth=1;
+  x.beginPath();x.moveTo(30,y+1.5);x.lineTo(G2.W-30,y+1.5);x.stroke();x.restore();
+};
+/* 관을 잡아 주는 스탠드 */
+Draw.stand2=function(x){
+  const bx=G2.CX+G2.TW/2+66, by=G2.DESK;
+  CV.shadow(x,bx,by+2,44,7,.3);
+  const bg=x.createLinearGradient(bx-40,0,bx+40,0);
+  bg.addColorStop(0,C.mix('pt',true,.10));bg.addColorStop(1,C.mix('pt',false,.55));
+  CV.rr(x,bx-40,by-9,80,11,3);x.fillStyle=bg;x.fill();
+  const rg=x.createLinearGradient(bx-5,0,bx+5,0);
+  rg.addColorStop(0,C.mix('pt',true,.22));rg.addColorStop(.45,C.v['pt']);rg.addColorStop(1,C.mix('pt',false,.5));
+  CV.rr(x,bx-5,G2.TT+40,10,by-9-(G2.TT+40),2);x.fillStyle=rg;x.fill();
+  // 클램프 팔
+  const ay=G2.TT+96;
+  CV.rr(x,G2.CX+G2.TW/2-6,ay-7,bx-(G2.CX+G2.TW/2)+10,14,4);
+  x.fillStyle=rg;x.fill();x.strokeStyle=C.mix('pt',false,.6);x.lineWidth=1;x.stroke();
+  x.beginPath();x.arc(bx,ay,9,0,6.284);x.fillStyle=C.mix('pt',false,.3);x.fill();
+};
+/* 왼쪽 아래 — 성냥갑 */
+Draw.matchbox=function(x){
+  const {x:bx,y:by}=G2.BOX, w=94, h=32;
+  CV.shadow(x,bx,by+h/2,w*.5,6,.34);
+  const g=x.createLinearGradient(bx-w/2,by-h/2,bx+w/2,by+h/2);
+  g.addColorStop(0,'#7C5A46');g.addColorStop(.45,'#6A4A39');g.addColorStop(1,'#4C342A');
+  CV.rr(x,bx-w/2,by-h/2,w,h,4);x.fillStyle=g;x.fill();
+  x.strokeStyle='#3A2820';x.lineWidth=1.2;x.stroke();
+  x.fillStyle='rgba(255,255,255,.16)';x.fillRect(bx-w/2+3,by-h/2+3,w-6,3);
+  // 마찰면
+  CV.rr(x,bx-w/2+6,by-3,w-12,12,2);x.fillStyle='#39566180';x.fill();
+  x.save();x.globalAlpha=.5;x.strokeStyle='#8FB6C6';x.lineWidth=.8;
+  for(let i=0;i<7;i++){const px=bx-w/2+11+i*11;
+    x.beginPath();x.moveTo(px,by-2);x.lineTo(px,by+8);x.stroke();}
+  x.restore();
+};
+/* 오른쪽 아래 — 향 받침 */
+Draw.censer=function(x){
+  const {x:bx,y:by}=G2.CEN, w=70;
+  CV.shadow(x,bx,by+9,w*.44,5,.34);
+  // 모래가 담긴 낮은 그릇 — 향을 꽂아 세운다
+  const g=x.createLinearGradient(bx-w/2,by-8,bx+w/2,by+10);
+  g.addColorStop(0,'#6A7A84');g.addColorStop(.5,'#4C5C66');g.addColorStop(1,'#333F46');
+  x.beginPath();
+  x.moveTo(bx-w/2,by-7);x.quadraticCurveTo(bx,by+15,bx+w/2,by-7);
+  x.lineTo(bx+w/2-4,by-10);x.lineTo(bx-w/2+4,by-10);x.closePath();
+  x.fillStyle=g;x.fill();x.strokeStyle='#283238';x.lineWidth=1.2;x.stroke();
+  x.beginPath();x.ellipse(bx,by-9,w/2-5,4.2,0,0,6.284);
+  x.fillStyle='#59493D';x.fill();                       // 담긴 재
+  x.fillStyle='rgba(255,255,255,.10)';
+  CV.rr(x,bx-w/2+6,by-9,w-12,2.4,1.2);x.fill();
+};
+/* 닫힌 고무마개 — 위로 끌어 연다 */
+Draw.cork=function(x,T){
+  const cx=G2.CX;
+  const off=Test.drag?Test.drag.off:0;
+  const sh=Test.shake>0?Math.sin(Test.shake*46)*Test.shake*7:0;
+  const y=G2.TT-16-off, hh=40, ww=34;
+  CV.shadow(x,cx,G2.TT-13,30,6,.3);
+  x.save();x.translate(sh,0);
+  const g=x.createLinearGradient(cx-ww,0,cx+ww,0);
+  g.addColorStop(0,'#6E5044');g.addColorStop(.4,'#8A6552');g.addColorStop(1,'#4E382F');
+  x.beginPath();x.moveTo(cx-ww,y-hh);x.lineTo(cx+ww,y-hh);
+  x.lineTo(cx+ww*.74,y);x.lineTo(cx-ww*.74,y);x.closePath();
+  x.fillStyle=g;x.fill();x.strokeStyle='#3D2B24';x.lineWidth=1.6;x.stroke();
+  x.fillStyle='rgba(255,255,255,.2)';x.fillRect(cx-ww+4,y-hh+4,ww*2-8,5);
+  x.restore();
+  // 당기라는 표시
+  const pull=clamp(off/T_PULL,0,1);
+  x.save();x.globalAlpha=Test.drag?1:.62+Math.sin(T*2.4)*.16;
+  x.strokeStyle=pull>=1?C.v['ok']:C.a('glass',.9);x.lineWidth=2.6;x.lineCap='round';
+  const ay=y-hh-16;
+  x.beginPath();x.moveTo(cx,ay);x.lineTo(cx,ay-20);
+  x.moveTo(cx-8,ay-12);x.lineTo(cx,ay-20);x.lineTo(cx+8,ay-12);x.stroke();
+  x.font='500 12px Pretendard,sans-serif';x.textAlign='center';
+  x.fillStyle=pull>=1?C.v['ok']:C.a('glass',.9);
+  x.fillText(pull>=1?'놓으면 열려요':'마개를 위로 끌어 주세요',cx,ay-30);
+  x.restore();
+};
+/* 뽑혀서 실험대에 눕는 마개 */
+Draw.corkLaid=function(x,p){
+  if(p<=0)return;
+  const e=ease3(p);
+  const sx=G2.CX, sy=G2.TT-56;
+  const ex=G2.TX-62, ey=G2.DESK-11;
+  const cxp=lerp(sx,ex,e), cyp=lerp(sy,ey,e)-Math.sin(e*Math.PI)*34;
+  const rot=lerp(0,1.86,e);          // 옆으로 넘어져 눕는다
+  x.save();
+  if(p>=1)CV.shadow(x,cxp,ey+10,19,4,.32);
+  x.translate(cxp,cyp);x.rotate(rot);
+  const hh=30, ww=15;                // 길이 30 · 반지름 15 — 눕히면 가로로 길다
+  const g=x.createLinearGradient(-ww,0,ww,0);
+  g.addColorStop(0,'#6E5044');g.addColorStop(.4,'#8A6552');g.addColorStop(1,'#4E382F');
+  x.beginPath();x.moveTo(-ww,-hh/2);x.lineTo(ww,-hh/2);
+  x.lineTo(ww*.74,hh/2);x.lineTo(-ww*.74,hh/2);x.closePath();
+  x.fillStyle=g;x.fill();x.strokeStyle='#3D2B24';x.lineWidth=1.3;x.stroke();
+  x.fillStyle='rgba(255,255,255,.18)';x.fillRect(-ww+2,-hh/2+2,ww*2-4,3);
+  x.restore();
+};
+/* 관 안쪽에 맺힌 물방울 */
+Draw.drops=function(x){
+  for(const d of Test.drops){
+    x.save();x.globalAlpha=d.a*.9;
+    const g=x.createRadialGradient(d.x-d.r*.4,d.y-d.r*.5,d.r*.1,d.x,d.y,d.r*1.5);
+    g.addColorStop(0,'rgba(255,255,255,.95)');
+    g.addColorStop(.5,'rgba(200,230,240,.55)');
+    g.addColorStop(1,'rgba(180,214,228,0)');
+    x.beginPath();x.ellipse(d.x,d.y,d.r,d.r*1.28,0,0,6.284);x.fillStyle=g;x.fill();
+    x.restore();
+  }
+};
+/* 드롭 링 — 관 입구에 대라는 표시 */
+Draw.zone=function(x,near,T){
+  const M=G2.MOUTH;
+  /* 그리는 원은 실제 판정보다 작다 — 원 밖에서 놓아도 잡히니 너그럽게 느껴진다 */
+  const r=Math.max(50,Test.zoneR()*.72)*(1-near*.10);
+  const on=near>0;
+  x.save();
+  if(on){
+    x.globalAlpha=.07+near*.09;
+    x.beginPath();x.arc(M.x,M.y,r,0,6.284);x.fillStyle=C.v['ok'];x.fill();
+    x.globalAlpha=1;
+  }
+  x.setLineDash([9,8]);x.lineDashOffset=-T*22;
+  x.strokeStyle=on?C.a('ok',.95):C.a('glass',.6);
+  x.lineWidth=on?2.8:2;
+  x.beginPath();x.arc(M.x,M.y,r,0,6.284);x.stroke();
+  x.setLineDash([]);
+  x.font='500 12px Pretendard,sans-serif';x.textAlign='center';
+  x.fillStyle=on?C.v['ok']:C.a('glass',.85);
+  x.fillText(on?'여기서 놓으세요':'관 입구까지 끌어오세요',M.x,Math.max(16,M.y-r-11));
+  x.restore();
+};
+/* 첫 진입 안내 */
+Draw.coach2=function(x,opened,T){
+  const a=.55+Math.sin(T*2.2)*.2;
+  x.save();x.globalAlpha=a;
+  x.font='500 12.5px Pretendard,sans-serif';x.textAlign='center';
+  x.fillStyle=C.a('glass',.95);
+  if(!opened){
+    x.fillText('① 고무마개를 위로 끌어 여세요',G2.CX,G2.DESK+52);
+  }else{
+    x.fillText('② 성냥불이나 향불을 끌어 관 입구에 대세요',G2.CX,G2.DESK+52);
+    x.strokeStyle=C.a('glass',.7);x.lineWidth=2;x.lineCap='round';
+    for(const id of ['match','ember']){
+      const hd=Test.handle(id);
+      x.beginPath();x.arc(hd.x,hd.y,30+Math.sin(T*2.6)*3,0,6.284);x.stroke();
+    }
+  }
+  x.restore();
+};
+/* 반응 순간 장면에 번지는 빛 */
+Draw.spill=function(x,kind,p){
+  if(App.reduced)return;
+  const M=G2.MOUTH;
+  if(kind==='pop'){
+    Draw.glow(x,M.x,M.y,240*(0.4+p*0.9),'rgba(255,231,178,'+(0.5*(1-p))+')',1);
+  }else if(kind==='flare'){
+    const g=Math.sin(p*Math.PI);
+    Draw.glow(x,M.x,M.y,180,'rgba(255,166,80,'+(0.42*g)+')',1);
+  }else if(kind==='bright'){
+    const g=Math.sin(p*Math.PI);
+    Draw.glow(x,M.x,M.y,120,'rgba(255,206,138,'+(0.26*g)+')',1);
+  }
+};
+/* 빛 번짐 — 가운데만 밝고 가장자리로 빠르게 사그라들어야 덩어리로 보이지 않는다 */
+Draw.glow=function(x,cx,cy,r,col,a){
+  if(r<=0)return;
+  const m=/^rgba?\(([^)]+)\)$/.exec(col);
+  if(!m)return;
+  const p=m[1].split(',');
+  const rgb=p.slice(0,3).join(',');
+  const al=parseFloat(p[3]!==undefined?p[3]:'1');
+  x.save();x.globalCompositeOperation='lighter';x.globalAlpha=a;
+  const g=x.createRadialGradient(cx,cy,0,cx,cy,r);
+  g.addColorStop(0,`rgba(${rgb},${al})`);
+  g.addColorStop(.22,`rgba(${rgb},${(al*.42).toFixed(3)})`);
+  g.addColorStop(.55,`rgba(${rgb},${(al*.10).toFixed(3)})`);
+  g.addColorStop(1,`rgba(${rgb},0)`);
+  x.beginPath();x.arc(cx,cy,r,0,6.284);x.fillStyle=g;x.fill();x.restore();
+};
+
+/* ---------- 성냥 · 향불 ----------
+   자루는 회전하지만 불꽃은 언제나 하늘을 향한다. hot 은 '반응이 시작됨'을 뜻한다. */
+Draw.tool=function(x,s,kind,T,fxKind,hot){
+  const lean=clamp((s.vx||0)*-0.0011,-0.5,0.5);
+  const lift=s.lift||0;
+  // 들어 올리면 실험대 그림자가 멀어진다
+  if(lift<1){
+    const sy=Math.max(s.y+30,G2.DESK-6);
+    CV.shadow(x,s.x-8,sy,26*(1-lift*.4),5,.28*(1-lift*.6));
+  }
+  // 자루
+  x.save();x.translate(s.x,s.y);x.rotate(s.rot);
+  if(kind==='match'){
+    const L=G2.REST.match.len;
+    CV.rr(x,0,-3.5,L,7,3);x.fillStyle='#C9A487';x.fill();
+    x.strokeStyle='rgba(0,0,0,.22)';x.lineWidth=.8;x.stroke();
+    CV.rr(x,0,-3.5,15,7,3);x.fillStyle='#4A3128';x.fill();   // 타 버린 머리 쪽
+    x.fillStyle='rgba(255,255,255,.20)';x.fillRect(3,-3,L-8,1.6);
+  }else{
+    const L=G2.REST.ember.len;
+    CV.rr(x,0,-2.6,L,5,2.5);x.fillStyle='#6E5044';x.fill();
+    x.fillStyle='rgba(255,255,255,.16)';x.fillRect(3,-2.2,L-8,1.3);
+  }
+  x.restore();
+  // 불 — 자루는 기울어도 불꽃은 언제나 하늘을 향한다
+  if(kind==='match'){
+    const big=(fxKind==='bright'&&hot)?1.55:(fxKind==='pop'&&hot?1.25:1);
+    /* 불꽃의 뿌리를 성냥 머리 안쪽에 둔다 — 자루 끝에 얹으면 밑동이 잘려 보인다 */
+    const hx=s.x+Math.cos(s.rot)*7, hy=s.y+Math.sin(s.rot)*7;
+    // 타고 있는 머리 — 불꽃이 여기서 피어난다
+    Draw.glow(x,hx,hy,15*big,'rgba(255,150,60,.5)',1);
+    x.save();x.translate(hx,hy);x.rotate(s.rot);
+    x.beginPath();x.ellipse(0,0,7,3.6,0,0,6.284);
+    const hg=x.createRadialGradient(0,0,0,0,0,7);
+    hg.addColorStop(0,'#FFD79A');hg.addColorStop(.55,'#E8672E');hg.addColorStop(1,'#7A3316');
+    x.fillStyle=hg;x.fill();x.restore();
+    Draw.flame(x,hx,hy+1,big,T,lean);
+  }else{
+    const glow=(fxKind==='flare'&&hot);
+    const dead=(fxKind==='out'&&hot);
+    Draw.ember(x,s.x,s.y-1,glow,dead,T,lean);
+  }
+};
+/* 흔들리는 불꽃 — 외염·내염·심 세 겹.
+   밑동은 한 점으로 모으고 배를 불린 뒤 끝을 뾰족하게 — 실제 불꽃의 윤곽이고,
+   가로로 자른 듯한 단면이 생기지 않는다. */
+Draw.flame=function(x,cx,cy,scale,T,lean){
+  const wob=Math.sin(T*11.4)*.12+Math.sin(T*17.7)*.07;
+  const H=(28+Math.sin(T*13.1)*2.4)*scale;
+  const W=(8.6+Math.sin(T*9.3)*.7)*scale;
+  Draw.glow(x,cx,cy-H*.42,H*2.0,'rgba(255,174,92,'+(.32*scale)+')',1);
+  const petal=(hh,ww,col)=>{
+    const tip=(lean+wob)*hh*.62;
+    const tx=cx+tip, ty=cy-hh;
+    const root=cy+hh*.10;              // 뿌리는 머리 안쪽으로 살짝 들어간다
+    x.beginPath();
+    x.moveTo(cx,root);
+    x.bezierCurveTo(cx-ww*.92,cy-hh*.06, cx-ww*1.02+tip*.3,cy-hh*.60, tx,ty);
+    x.bezierCurveTo(cx+ww*1.02+tip*.3,cy-hh*.60, cx+ww*.92,cy-hh*.06, cx,root);
+    x.closePath();x.fillStyle=col;x.fill();
+  };
+  x.save();
+  petal(H,W,'rgba(232,103,46,.92)');
+  petal(H*.64,W*.62,'rgba(245,195,107,.95)');
+  petal(H*.30,W*.34,'rgba(255,248,222,.96)');
+  x.restore();
+};
+/* 향불 — 불씨가 호흡하고 연기가 흘러간다 */
+Draw.ember=function(x,cx,cy,glow,dead,T,lean){
+  const br=.5+.5*Math.sin(T*2.4);
+  if(dead){
+    x.beginPath();x.arc(cx,cy,3.6,0,6.284);x.fillStyle='#6B6560';x.fill();
+    Draw.smokeRibbon(x,cx,cy,T,lean,.42,3);
+    return;
+  }
+  const r=glow?7.4+br*1.2:4+br*.7;
+  Draw.glow(x,cx,cy,glow?58:22,glow?'rgba(255,178,90,.75)':'rgba(232,103,46,'+(.26+br*.12)+')',1);
+  const g=x.createRadialGradient(cx,cy,0,cx,cy,r);
+  if(glow){ g.addColorStop(0,'#FFF3D2');g.addColorStop(.45,'#FFC46B');g.addColorStop(1,'#E8672E'); }
+  else{ g.addColorStop(0,'#FFC46B');g.addColorStop(.6,'#E8672E');g.addColorStop(1,'#9E3F1C'); }
+  x.beginPath();x.arc(cx,cy,r,0,6.284);x.fillStyle=g;x.fill();
+  Draw.smokeRibbon(x,cx,cy,T,lean,glow?.14:.30,glow?2:3);
+};
+/* 흘러가는 연기 리본 */
+/* 흘러가는 연기 리본 — 꺾인 선분이 아니라 한 번에 이어지는 곡선으로 긋고,
+   위로 갈수록 투명해지는 그러데이션으로 자연스럽게 흩어지게 한다 */
+Draw.smokeRibbon=function(x,cx,cy,T,lean,alpha,n){
+  if(App.reduced)return;
+  x.save();x.lineCap='round';x.lineJoin='round';
+  for(let i=0;i<n;i++){
+    const ph=T*1.15+i*2.2, up=46+i*9;
+    const pts=[];
+    for(let s=0;s<=6;s++){
+      const f=s/6;
+      pts.push({x:cx+Math.sin(ph+f*3.1)*(4+f*16)+lean*up*f*.8, y:cy-3-up*f});
+    }
+    const g=x.createLinearGradient(cx,cy-3,cx,cy-3-up);
+    g.addColorStop(0,`rgba(176,192,201,${(alpha*.85).toFixed(3)})`);
+    g.addColorStop(.55,`rgba(176,192,201,${(alpha*.5).toFixed(3)})`);
+    g.addColorStop(1,'rgba(176,192,201,0)');
+    x.strokeStyle=g;x.lineWidth=1.8+i*.5;
+    x.beginPath();x.moveTo(pts[0].x,pts[0].y);
+    for(let s=1;s<pts.length-1;s++){
+      const mx=(pts[s].x+pts[s+1].x)/2, my=(pts[s].y+pts[s+1].y)/2;
+      x.quadraticCurveTo(pts[s].x,pts[s].y,mx,my);
+    }
+    x.stroke();
+  }
+  x.restore();
+};
+/* 확인 순간의 모션 — 진행도 p 는 0(닿는 순간) → 1(끝) */
+Draw.fx=function(x,cx,cy,kind,p){
+  const life=1-p;
+  x.save();
+  if(kind==='pop'){
+    // 퍽 — 순간 팽창하는 섬광
+    const r=18+p*130;
+    x.globalAlpha=Math.max(0,life*0.9);
+    const g=x.createRadialGradient(cx,cy,r*.1,cx,cy,r);
+    g.addColorStop(0,'rgba(255,248,225,.95)');
+    g.addColorStop(.42,C.a('h2',.55));
+    g.addColorStop(1,'rgba(255,196,107,0)');
+    x.beginPath();x.arc(cx,cy,r,0,6.284);x.fillStyle=g;x.fill();
+  }else if(kind==='flare'){
+    // 활활 — 불씨가 되살아나 밝아진다
+    const gl=Math.sin(p*Math.PI);
+    x.globalAlpha=Math.max(0,gl*.85);
+    const g=x.createRadialGradient(cx,cy,4,cx,cy,66);
+    g.addColorStop(0,'rgba(255,232,178,.95)');
+    g.addColorStop(.4,C.a('o2',.6));
+    g.addColorStop(1,'rgba(232,103,46,0)');
+    x.beginPath();x.arc(cx,cy,66,0,6.284);x.fillStyle=g;x.fill();
+    x.strokeStyle=C.a('o2',.85*gl);x.lineWidth=2.4;x.lineCap='round';
+    for(let i=0;i<10;i++){
+      const a=i/10*6.284+p*1.6, r0=24+gl*9, r1=r0+18+gl*20;
+      x.beginPath();x.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);
+      x.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);x.stroke();
+    }
+  }else if(kind==='bright'){
+    x.globalAlpha=Math.max(0,Math.sin(p*Math.PI)*.5);
+    const g=x.createRadialGradient(cx,cy,4,cx,cy,48);
+    g.addColorStop(0,'rgba(255,226,170,.8)');g.addColorStop(1,'rgba(245,165,75,0)');
+    x.beginPath();x.arc(cx,cy,48,0,6.284);x.fillStyle=g;x.fill();
+  }else if(kind==='out'&&p<.34){
+    /* 관 안에서는 불씨가 꺼지지만, 입구에서는 새어 나온 수소가 공기와 만나
+       잠깐 탄다. 수소 불꽃은 옅은 푸른빛이고 소리도 크지 않다 —
+       성냥불의 "퍽"과 헷갈리지 않도록 작고 짧게만 보인다. */
+    const q=p/.34, f=Math.sin(q*Math.PI);
+    x.globalAlpha=Math.max(0,f*.75);
+    const g=x.createRadialGradient(cx,cy,1,cx,cy,26);
+    g.addColorStop(0,'rgba(226,244,255,.95)');
+    g.addColorStop(.42,'rgba(150,205,240,.55)');
+    g.addColorStop(1,'rgba(120,180,230,0)');
+    x.beginPath();x.ellipse(cx,cy-6*f,15,20+8*f,0,0,6.284);x.fillStyle=g;x.fill();
+  }
+  x.restore();
+};
+/* ==================== 3단계 · 질량 환산 ==================== */
+const MASSQ={
+  q:'그러면 <b>수소와 산소의 질량비</b>는 약 얼마일까요?',
+  o:['1 : 4','1 : 8','1 : 16','2 : 1'], a:1,
+  why:'수소는 부피가 2배지만 밀도가 산소의 <b>16분의 1</b>밖에 안 돼요. 2 ÷ 16 = 8분의 1, 그래서 질량비는 <b>수소 : 산소 = 1 : 8</b>입니다.'
+};
+const Mass={
+  src(){
+    if(App.row) return {h2:App.row.h2,o2:App.row.o2};
+    return {h2:Lab.read('h2'),o2:Lab.read('o2')};
+  },
+  calc(){
+    const s=Mass.src();
+    const mH=s.h2/1000*SCI.dH2, mO=s.o2/1000*SCI.dO2;
+    return {vH:s.h2,vO:s.o2,mH,mO,ratio:mH>0?mO/mH:0};
+  },
+  next(){
+    if(App.massStage<1){ App.massStage=1;Sfx.play('ok');Mass.render(); }
+  },
+  answer(i){
+    App.massAns=i;Sfx.play(i===MASSQ.a?'ok':'no');
+    if(App.massStage<2)App.massStage=2;
+    Mass.render();Flow.render();
+  },
+  render(){
+    const d=Mass.calc(), st=App.massStage;
+    let h='';
+    h+=`<div class="crow on"><span class="h">① 내가 측정한 부피</span>
+      <span class="eq"><span class="h2">수소 ${fmt(d.vH)} mL</span><em>·</em><span class="o2">산소 ${fmt(d.vO)} mL</span></span>
+      <span class="eq"><em>부피비</em> <b class="out">${d.vO>0?fmt(d.vH/d.vO,2):'—'} : 1</b></span></div>`;
+    h+=`<div class="crow ${st>=1?'on':''}"><span class="h">② 밀도를 곱해 질량으로 (0 ℃ · 1 기압)</span>`;
+    if(st>=1){
+      h+=`<span class="eq"><span class="h2">${fmt(d.vH/1000,4)} L</span><em>×</em>0.0899 g/L<em>=</em>
+        <span class="out h2">${d.mH.toFixed(5)} g</span></span>
+        <span class="eq"><span class="o2">${fmt(d.vO/1000,4)} L</span><em>×</em>1.429 g/L<em>=</em>
+        <span class="out o2">${d.mO.toFixed(5)} g</span></span>`;
+    }else{
+      h+=`<span class="eq"><em>수소 0.0899 g/L · 산소 1.429 g/L 를 곱하면 질량이 나와요</em></span>
+        <button class="btn acc sm" style="margin-top:6px" onclick="Mass.next()">밀도를 곱해 질량 구하기</button>`;
+    }
+    h+='</div>';
+    h+=`<div class="crow ${st>=1?'on':''}"><span class="h">③ 질량을 견주면</span>`;
+    h+=st>=1
+      ? `<span class="eq"><span class="o2">${d.mO.toFixed(5)}</span><em>÷</em><span class="h2">${d.mH.toFixed(5)}</span><em>=</em>
+         <b class="out">${fmt(d.ratio,2)}</b></span>`
+      : `<span class="eq"><em>—</em></span>`;
+    h+='</div>';
+    UI.el('calc3').innerHTML=h;
+
+    // 질량비 고르기
+    const box=UI.el('mq3');
+    if(st<1){ box.innerHTML=`<div class="lock"><span>💡 위 ②에서 질량을 먼저 구해 보세요.</span></div>`; }
+    else{
+      const p=App.massAns;
+      let q=`<div class="poe"><div class="q">${MASSQ.q}</div><div class="opts">`;
+      q+=MASSQ.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
+        onclick="Mass.answer(${i})"><span class="mk"></span>${o}</button>`).join('');
+      q+='</div>';
+      if(p!==null){
+        const ok=p===MASSQ.a;
+        q+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
+          ok?'맞았어요.':`다시 살펴볼까요? 정답은 <b>1 : 8</b>이에요.`}<br>${MASSQ.why}
+          <br><span style="opacity:.8">내 측정값으로는 ${fmt(d.ratio,2)}가 나왔어요. 기체가 물에 조금 녹아 8에서 살짝 벗어납니다.</span></span></div>`;
+      }
+      q+='</div>';
+      box.innerHTML=q;
+    }
+    Draw.s3();Flow.ctrl();
+  }
+};
+
+/* ---------- 3단계 캔버스: 부피 → 질량 도해 ---------- */
+const G3={W:620,H:520};
+Draw.s3=function(){
+  const c=CV.ctx('cv3');if(!c)return;
+  const {x,w,h}=c;
+  x.save();
+  CV.fit(x,w,h,G3.W,G3.H);
+  const d=Mass.calc(), st=App.massStage;
+  const LC=190, RC=430, BW=76;
+
+  const label=(cx,ty,txt,col,sz)=>{
+    x.textAlign='center';x.font=`600 ${sz||12}px Pretendard,sans-serif`;
+    x.fillStyle=col;x.fillText(txt,cx,ty);
+  };
+  // ── 위: 부피 (2 : 1)
+  const vBase=232, vMax=140;
+  const mx=Math.max(d.vH,0.001);
+  [['h2',LC,d.vH],['o2',RC,d.vO]].forEach(([k,cx,v])=>{
+    const bh=Math.max(6,v/mx*vMax);
+    CV.shadow(x,cx,vBase+6,BW*.5,5,.3);
+    const g=x.createLinearGradient(cx-BW/2,0,cx+BW/2,0);
+    g.addColorStop(0,C.a(k,.55));g.addColorStop(.4,C.a(k,.9));g.addColorStop(1,C.a(k,.45));
+    CV.rr(x,cx-BW/2,vBase-bh,BW,bh,7);x.fillStyle=g;x.fill();
+    x.strokeStyle=C.mix(k,false,.35);x.lineWidth=1.3;x.stroke();
+    x.fillStyle='rgba(255,255,255,.22)';CV.rr(x,cx-BW/2+5,vBase-bh+4,BW-10,3,2);x.fill();
+    label(cx,vBase-bh-12,`${fmt(v)} mL`,C.v[k],13);
+  });
+  label(LC,vBase+24,'수소 H₂',C.v['h2'],13);
+  label(RC,vBase+24,'산소 O₂',C.v['o2'],13);
+  // 지시선 + 기호
+  x.setLineDash([4,4]);x.strokeStyle=C.a('txt-3',.8);x.lineWidth=1;
+  x.beginPath();x.moveTo(LC-BW/2-8,vBase-vMax*.5);x.lineTo(86,vBase-vMax*.5);x.stroke();
+  x.setLineDash([]);
+  x.textAlign='right';x.font='600 13px "JetBrains Mono",monospace';x.fillStyle=C.v['txt-2'];
+  x.fillText('V = 부피',82,vBase-vMax*.5+4);
+  x.textAlign='center';x.font='700 15px "JetBrains Mono",monospace';x.fillStyle=C.v['txt'];
+  x.fillText(`부피비  ${d.vO>0?fmt(d.vH/d.vO,1):'—'} : 1`,G3.W/2,vBase+58);
+
+  // ── 가운데: × 밀도
+  x.save();x.globalAlpha=st>=1?1:.35;
+  x.textAlign='center';x.font='600 12px Pretendard,sans-serif';x.fillStyle=C.v['txt-2'];
+  x.fillText('밀도를 곱한다',G3.W/2,vBase+92);
+  x.font='500 11px "JetBrains Mono",monospace';x.fillStyle=C.v['txt-3'];
+  x.fillText('H₂ 0.0899 g/L   ·   O₂ 1.429 g/L',G3.W/2,vBase+110);
+  [LC,RC].forEach(cx=>{
+    x.beginPath();x.moveTo(cx,vBase+118);x.lineTo(cx,vBase+140);
+    x.strokeStyle=C.a('txt-3',.85);x.lineWidth=2;x.stroke();
+    x.beginPath();x.moveTo(cx-5,vBase+134);x.lineTo(cx,vBase+142);x.lineTo(cx+5,vBase+134);
+    x.fillStyle=C.a('txt-3',.85);x.fill();
+  });
+  x.restore();
+
+  // ── 아래: 질량 (1 : 8)
+  const mBase=486, mMax=98;
+  x.save();x.globalAlpha=st>=1?1:.22;
+  const mxm=Math.max(d.mO,1e-9);
+  [['h2',LC,d.mH],['o2',RC,d.mO]].forEach(([k,cx,m])=>{
+    const bh=Math.max(4,m/mxm*mMax);
+    CV.shadow(x,cx,mBase+6,BW*.5,5,.3);
+    const g=x.createLinearGradient(cx-BW/2,0,cx+BW/2,0);
+    g.addColorStop(0,C.a(k,.5));g.addColorStop(.4,C.a(k,.85));g.addColorStop(1,C.a(k,.4));
+    CV.rr(x,cx-BW/2,mBase-bh,BW,bh,6);x.fillStyle=g;x.fill();
+    x.strokeStyle=C.mix(k,false,.35);x.lineWidth=1.3;x.stroke();
+    if(st>=1)label(cx,mBase-bh-11,`${m.toFixed(5)} g`,C.v[k],12);
+  });
+  x.setLineDash([4,4]);x.strokeStyle=C.a('txt-3',.8);x.lineWidth=1;
+  x.beginPath();x.moveTo(LC-BW/2-8,mBase-mMax*.4);x.lineTo(86,mBase-mMax*.4);x.stroke();
+  x.setLineDash([]);
+  x.textAlign='right';x.font='600 13px "JetBrains Mono",monospace';x.fillStyle=C.v['txt-2'];
+  x.fillText('m = 질량',82,mBase-mMax*.4+4);
+  if(st>=1){
+    x.textAlign='center';x.font='700 15px "JetBrains Mono",monospace';x.fillStyle=C.v['txt'];
+    x.fillText(`질량비  1 : ${fmt(d.ratio,1)}`,G3.W/2,mBase+34);
+  }
+  x.restore();
+  x.restore();
+  CV.mark(x,w,h);
+};
+
+/* ==================== 4단계 · 확인 퀴즈 ==================== */
+const QUIZ=[
+  {t:'선택형', q:'(+)극에 모인 기체에 <b>꺼져 가는 향불</b>을 가까이 댔더니 불씨가 다시 밝게 살아났어요. 이 기체는 무엇일까요?',
+   o:['수소','산소','이산화 탄소','수증기'], a:1,
+   ex:'산소는 스스로 타지는 않지만 <b>다른 물질이 타는 것을 돕는</b> 조연성 기체예요. 그래서 꺼져 가던 불씨가 다시 살아납니다. 수소였다면 성냥불에 “퍽” 소리를 냈을 거예요.',
+   card:'c-gas'},
+  {t:'빈칸', q:'물에 전류를 흘렸더니 수소와 산소로 나뉘었어요. 따라서 물은 물질을 이루는 기본 성분인 ___ 가 아니라, 두 ___ 가 결합한 화합물이에요. 빈칸에 공통으로 들어갈 말은?',
+   o:['원소','원자','분자','이온'], a:0,
+   ex:'<b>원소</b>는 더 이상 다른 물질로 분해되지 않는 기본 성분이에요. 물은 분해되었으니 원소가 아니고, 분해되어 나온 수소와 산소는 더 이상 분해되지 않으니 원소입니다.',
+   card:'c-elem'},
+  {t:'O/X', q:'실험에서 확인한 내용이에요. <b>“전압을 높이면 수소와 산소의 부피비가 2 : 1보다 커진다.”</b>',
+   o:['맞아요','아니에요'], a:1,
+   ex:'전압은 <b>반응 속도</b>만 바꿔요. 6 V든 12 V든 물 한 분자가 쪼개지는 방식은 같으므로 부피비는 항상 2 : 1입니다. 1단계에서 전압을 바꿔 재어 본 값을 떠올려 보세요.',
+   card:'c-ratio'},
+  {t:'순서 배열', q:'모은 기체의 <b>질량비</b>를 구하는 순서대로 눌러 주세요.',
+   seq:['눈금관에서 기체의 부피를 읽는다','부피에 각 기체의 밀도를 곱한다','두 기체의 질량을 서로 나눈다'],
+   ex:'질량은 저울로 직접 잴 수 없어요. <b>부피 × 밀도 = 질량</b> 이라는 관계를 거쳐야 합니다. 그래서 부피비 2 : 1에서 질량비 1 : 8이 나와요.',
+   card:'c-mass'}
+];
+const Quiz={
+  render(){
+    const i=App.quiz.i, q=QUIZ[i], a=App.quiz.ans[i];
+    let h=`<div class="qh"><span class="tag">${q.t}</span>
+      <span>${i+1} / ${QUIZ.length}</span>
+      <span style="margin-left:auto">맞힌 문항 <b class="num">${Quiz.score()}</b></span></div>
+      <div class="qq">${q.q}</div>`;
+    if(q.seq){
+      const picked=App.quiz.ord||[];
+      const order=Quiz.shuffled(i);
+      h+='<div class="ord">';
+      h+=order.map(k=>{
+        const at=picked.indexOf(k);
+        return `<button class="${at>=0?'picked':''}" ${a!==undefined?'disabled':''}
+          onclick="Quiz.pickOrd(${k})"><span class="n">${at>=0?at+1:''}</span>${esc(q.seq[k])}</button>`;
+      }).join('');
+      h+='</div>';
+      if(a===undefined&&picked.length)
+        h+=`<button class="btn line sm" style="align-self:flex-start" onclick="Quiz.clearOrd()">순서 다시 고르기</button>`;
+    }else{
+      h+='<div class="opts">';
+      h+=q.o.map((o,k)=>{
+        let cls='';
+        if(a!==undefined){ if(k===q.a)cls='correct'; else if(k===a)cls='wrong'; }
+        return `<button class="${cls}" ${a!==undefined?'disabled':''} onclick="Quiz.answer(${k})">
+          <span class="mk"></span>${esc(o)}</button>`;
+      }).join('');
+      h+='</div>';
+    }
+    if(a!==undefined){
+      const ok=Quiz.right(i);
+      h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span><b>${
+        ok?'맞았어요.':'다시 살펴볼까요?'}</b><br>${q.ex}</span></div>`;
+      h+=`<div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${!ok&&q.card?`<button class="btn line sm" onclick="Theory.open('${q.card}',true)">이 개념 다시 보기</button>`:''}
+        ${i>0?'<button class="btn line sm" onclick="Quiz.move(-1)">이전 문항</button>':''}
+        ${i<QUIZ.length-1?'<button class="btn acc sm" style="margin-left:auto" onclick="Quiz.move(1)">다음 문항</button>'
+          :'<button class="btn acc sm" style="margin-left:auto" onclick="Flow.go(5)">탐구 보고서로 가기</button>'}
+      </div>`;
+    }
+    UI.el('quiz4').innerHTML=h;
+    Flow.ctrl();
+  },
+  shuffled(i){
+    // 문항마다 고정된 순서 — 다시 그려도 섞이지 않는다
+    if(!Quiz._sh)Quiz._sh={};
+    if(!Quiz._sh[i]){
+      const n=QUIZ[i].seq.length, arr=[...Array(n).keys()];
+      for(let k=n-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[arr[k],arr[j]]=[arr[j],arr[k]];}
+      if(arr.every((v,k)=>v===k))arr.reverse();
+      Quiz._sh[i]=arr;
+    }
+    return Quiz._sh[i];
+  },
+  pickOrd(k){
+    const p=App.quiz.ord||(App.quiz.ord=[]);
+    if(p.includes(k))return;
+    p.push(k);Sfx.play('tap');
+    if(p.length===QUIZ[App.quiz.i].seq.length){
+      App.quiz.ans[App.quiz.i]=p.join('');
+      Sfx.play(Quiz.right(App.quiz.i)?'ok':'no');
+      Flow.render();
+    }
+    Quiz.render();
+  },
+  clearOrd(){ App.quiz.ord=[];Sfx.play('tap');Quiz.render(); },
+  answer(k){
+    App.quiz.ans[App.quiz.i]=k;
+    Sfx.play(k===QUIZ[App.quiz.i].a?'ok':'no');
+    Quiz.render();Flow.render();
+  },
+  right(i){
+    const q=QUIZ[i], a=App.quiz.ans[i];
+    if(a===undefined)return false;
+    return q.seq ? a==='012' : a===q.a;
+  },
+  move(d){
+    App.quiz.i=clamp(App.quiz.i+d,0,QUIZ.length-1);
+    if(QUIZ[App.quiz.i].seq&&App.quiz.ans[App.quiz.i]===undefined)App.quiz.ord=[];
+    Sfx.play('tap');Quiz.render();
+  },
+  score(){ return QUIZ.reduce((n,q,i)=>n+(Quiz.right(i)?1:0),0); },
+  answered(){ return Object.keys(App.quiz.ans).length; }
+};
+/* ==================== 5단계 · 탐구 보고서 ==================== */
+const Report={
+  MIN:80,
+  read(){ return {c:UI.el('r-c').value, q:UI.el('r-q').value}; },
+  ok(){ return UI.el('r-c').value.trim().length>=Report.MIN; },
+  check(){
+    const n=UI.el('r-c').value.trim().length;
+    const el=UI.el('r-cnt');
+    el.textContent=`${n} / ${Report.MIN}자`;
+    el.classList.toggle('err',n<Report.MIN);
+    const ready=Report.ok();
+    const noName=!App.id.trim()||!App.name.trim();
+    UI.el('r-hint').innerHTML=ready
+      ? `<div style="display:flex;gap:8px;flex-wrap:wrap;width:100%">
+          <button class="btn line" onclick="Report.png()">PNG 이미지 저장</button>
+          <button class="btn pri" style="flex:1" onclick="Report.pdf()">결과 PDF 저장</button>
+         </div>${noName?'<span style="width:100%;font-size:12px;margin-top:6px">학번과 이름을 넣으면 보고서에 함께 적혀요.</span>':''}`
+      : `<span>결론을 <b>${Report.MIN}자 이상</b> 쓰면 저장 버튼이 열려요. 부피비·질량비·기체 확인 결과를 근거로 들어 보세요.</span>`;
+    Flow.ctrl();
+    return ready;
+  },
+  summary(){
+    const d=Mass.calc();
+    let h='';
+    if(App.row){
+      const r=App.row;
+      h+=`<div class="sumcard"><div class="h"><span>1단계</span><span>·</span><span>전기분해</span></div>
+        <div class="m">${r.volt} V로 ${Math.floor(r.t/60)}분 ${String(Math.round(r.t%60)).padStart(2,'0')}초 측정</div>
+        <div class="d"><span>수소 <b>${fmt(r.h2)} mL</b></span><span>산소 <b>${fmt(r.o2)} mL</b></span>
+        <span>부피비 <b>${r.o2>0?fmt(r.h2/r.o2,2):'—'} : 1</b></span></div></div>`;
+    }
+    if(App.obs1!==null){
+      h+=`<div class="sumcard"><div class="h"><span>1단계</span><span>·</span><span>변인 통제</span></div>
+        <div class="m">${esc(OBS1.o[App.obs1])}</div>
+        <div class="d"><span>${App.obs1===OBS1.a?'맞았어요':'다시 살펴봤어요'}</span></div></div>`;
+    }
+    App.testLog.forEach(t=>{
+      h+=`<div class="sumcard"><div class="h"><span>2단계</span><span>·</span>
+        <span>${t.tube==='h2'?'(−)극':'(+)극'}</span></div>
+        <div class="m">${t.tool==='match'?'성냥불':'꺼져가는 향불'} — ${esc(t.text)}</div>
+        <div class="d"><span>${t.ok===false
+          ? '성질을 견주어 본 탐구'
+          : `확인된 기체 <b>${t.tube==='h2'?'수소 H₂':'산소 O₂'}</b>`}</span></div></div>`;
+    });
+    if(App.massAns!==null){
+      h+=`<div class="sumcard"><div class="h"><span>3단계</span><span>·</span><span>질량 환산</span></div>
+        <div class="m">질량비 1 : ${fmt(d.ratio,1)}</div>
+        <div class="d"><span>수소 <b>${d.mH.toFixed(5)} g</b></span><span>산소 <b>${d.mO.toFixed(5)} g</b></span>
+        <span>${App.massAns===MASSQ.a?'1 : 8 로 답함':'다시 살펴봤어요'}</span></div></div>`;
+    }
+    if(Quiz.answered()){
+      h+=`<div class="sumcard"><div class="h"><span>4단계</span><span>·</span><span>확인 퀴즈</span></div>
+        <div class="m">${QUIZ.length}문항 중 ${Quiz.score()}문항 정답</div></div>`;
+    }
+    UI.el('rep-sum').innerHTML=h||'<div class="empty">아직 기록이 없어요.<br>1단계부터 차례로 실험하면 여기에 모입니다.</div>';
+  },
+  sheet(){
+    const d=Mass.calc(), r=Report.read();
+    const dt=new Date();
+    const ds=`${dt.getFullYear()}. ${dt.getMonth()+1}. ${dt.getDate()}.`;
+    const x0=App.row;
+    const rows=x0?`<tr>
+      <td>${Math.floor(x0.t/60)}분 ${String(Math.round(x0.t%60)).padStart(2,'0')}초</td>
+      <td>${x0.volt} V</td><td>${fmt(x0.h2)} mL</td><td>${fmt(x0.o2)} mL</td>
+      <td>${x0.o2>0?fmt(x0.h2/x0.o2,2):'—'} : 1</td></tr>`:'';
+    const tests=App.testLog.map(t=>`<tr>
+      <th style="width:110px">${t.tube==='h2'?'(−)극':'(+)극'}</th>
+      <td>${t.tool==='match'?'성냥불':'꺼져가는 향불'} — ${esc(t.text)}${t.ok===false
+        ? ' <i>(성질을 견주어 본 탐구)</i>'
+        : ` → <b>${t.tube==='h2'?'수소 H₂':'산소 O₂'}</b>`}</td></tr>`).join('');
+    UI.el('sheet').innerHTML=`
+      <h1>물의 전기분해 탐구 보고서</h1>
+      <div class="meta">
+        <span>학번 <b>${esc(App.id)||'—'}</b></span><span>이름 <b>${esc(App.name)||'—'}</b></span>
+        <span>날짜 <b>${ds}</b></span>
+        <span>성취기준 <b>9과11-01 · 9과16-04</b></span></div>
+
+      <h3>1 · 실험 조건</h3>
+      <table><tr><th style="width:130px">전해질</th><td>수산화 나트륨(NaOH) 소량을 녹인 물</td></tr>
+        <tr><th>사용한 전압</th><td>${Object.keys(App.usedVolt).sort((a,b)=>a-b).join(' V, ')||'—'} V</td></tr>
+        <tr><th>전체 반응식</th><td>2H₂O → 2H₂↑ + O₂↑</td></tr></table>
+
+      <h3>2 · 부피 측정 기록</h3>
+      ${rows?`<table><tr><th>시각</th><th>전압</th><th>(−)극 수소</th><th>(+)극 산소</th><th>부피비</th></tr>${rows}</table>`
+        :'<div class="box">기록된 측정값이 없습니다.</div>'}
+
+      <h3>3 · 기체 확인</h3>
+      ${tests?`<table>${tests}</table>`:'<div class="box">기체 확인 기록이 없습니다.</div>'}
+
+      <h3>4 · 질량 환산 (0 ℃ · 1 기압)</h3>
+      <table>
+        <tr><th style="width:130px">수소 H₂</th><td>${fmt(d.vH)} mL × 0.0899 g/L = <b>${d.mH.toFixed(5)} g</b></td></tr>
+        <tr><th>산소 O₂</th><td>${fmt(d.vO)} mL × 1.429 g/L = <b>${d.mO.toFixed(5)} g</b></td></tr>
+        <tr><th>질량비</th><td><b>수소 : 산소 = 1 : ${fmt(d.ratio,1)}</b> (이론값 1 : 8)</td></tr>
+      </table>
+
+      <h3>5 · 확인 퀴즈</h3>
+      <div class="box">${QUIZ.length}문항 중 ${Quiz.score()}문항 정답</div>
+
+      <h3>6 · 이 실험으로 알게 된 것</h3>
+      <div class="box">${esc(r.c)}</div>
+      ${r.q.trim()?`<h3>7 · 더 알아보고 싶은 것</h3><div class="box">${esc(r.q)}</div>`:''}
+
+      <div class="ft">🧪 송쌤과학 (Song Ssaem Science) &nbsp;|&nbsp; ⓒ 2026 송세호 · 아주중학교<br>
+        📺 YouTube: @songsamscience &nbsp; 📷 Instagram: @songsamscience<br>
+        ⚠ 무단 복제·상업적 이용 금지</div>`;
+    return UI.el('sheet');
+  },
+  async shot(){
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    return html2canvas(Report.sheet(),{scale:2,backgroundColor:'#fff',logging:false});
+  },
+  /* 저장 기능은 외부 라이브러리에 기대고 있다. 망에서 막혔다면 왜 안 되는지 알려 준다. */
+  libs(kind){
+    const need=kind==='pdf'?(typeof html2canvas!=='undefined'&&window.jspdf)
+                           :(typeof html2canvas!=='undefined');
+    if(!need)UI.toast('저장 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 새로 고쳐 주세요.');
+    return !!need;
+  },
+  fname(ext){
+    const n=[App.id.trim(),App.name.trim()].filter(Boolean).join('_')||'미입력';
+    return `물의전기분해_${n}.${ext}`;
+  },
+  async png(){
+    if(!Report.ok())return UI.toast('결론을 먼저 채워 주세요.');
+    if(!Report.libs('png'))return;
+    UI.toast('이미지를 만들고 있어요…');Sfx.play('shot');
+    try{
+      const cv=await Report.shot();
+      cv.toBlob(b=>{
+        const url=URL.createObjectURL(b);
+        const a=document.createElement('a');a.download=Report.fname('png');a.href=url;a.click();
+        setTimeout(()=>URL.revokeObjectURL(url),4000);
+        Sfx.play('ok');UI.toast('저장했어요. 새 창이 열리면 길게 눌러 저장해 주세요.');
+      },'image/png');
+    }catch(e){ UI.toast('이미지를 만들지 못했어요. 실험 기록은 그대로 있어요.'); }
+  },
+  async pdf(){
+    if(!Report.ok())return UI.toast('결론을 먼저 채워 주세요.');
+    if(!Report.libs('pdf'))return;
+    UI.toast('PDF를 만들고 있어요…');
+    try{
+      const cv=await Report.shot();
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+      const PW=210,PH=297,M=8, iw=PW-M*2, ih=PH-M*2;
+      const pxPerMm=cv.width/iw, fullH=cv.height/pxPerMm;
+      const img=cv.toDataURL('image/jpeg',0.93);
+      let pages=1;
+      if(fullH<=ih*1.02){
+        pdf.addImage(img,'JPEG',M,M,iw,fullH);
+      }else{
+        const pageHpx=Math.floor(ih*pxPerMm);
+        let sy=0;pages=0;
+        while(sy<cv.height&&pages<12){
+          const sh=Math.min(pageHpx,cv.height-sy);
+          const c2=document.createElement('canvas');
+          c2.width=cv.width;c2.height=sh;
+          const cx=c2.getContext('2d');
+          cx.fillStyle='#ffffff';cx.fillRect(0,0,c2.width,c2.height);
+          cx.drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);
+          if(pages>0)pdf.addPage();
+          pdf.addImage(c2.toDataURL('image/jpeg',0.93),'JPEG',M,M,iw,sh/pxPerMm);
+          sy+=sh;pages++;
+        }
+      }
+      pdf.save(Report.fname('pdf'));
+      Sfx.play('ok');UI.toast(`PDF로 저장했어요. (${pages}쪽) 다운로드 폴더를 확인해 주세요.`);
+    }catch(e){ UI.toast('PDF를 만들지 못했어요. 이미지로 저장해 보세요.'); }
+  }
+};
+
+/* ==================== 원리 정리 드로어 ==================== */
+const CARDS=[
+ {id:'c-elem', n:1, t:'원소와 화합물',
+  fig:`<svg viewBox="0 0 320 128" role="img" aria-label="물이 수소와 산소로 갈라지는 그림">
+    <rect x="118" y="10" width="84" height="30" rx="8" fill="#0D2634" stroke="#8FB6C6" stroke-width="1.4"/>
+    <text x="160" y="30" fill="#8FB6C6" font-size="14" text-anchor="middle" font-family="monospace">H₂O</text>
+    <path d="M160 42v16M160 58h-70v14M160 58h70v14" fill="none" stroke="#8FA3B0" stroke-width="1.6"/>
+    <path d="M86 68l4 8 4-8M226 68l4 8 4-8" fill="#8FA3B0"/>
+    <rect x="52" y="78" width="76" height="30" rx="8" fill="none" stroke="#7FD8EC" stroke-width="1.6"/>
+    <text x="90" y="98" fill="#7FD8EC" font-size="14" text-anchor="middle" font-family="monospace">H₂</text>
+    <rect x="192" y="78" width="76" height="30" rx="8" fill="none" stroke="#E8672E" stroke-width="1.6"/>
+    <text x="230" y="98" fill="#E8672E" font-size="14" text-anchor="middle" font-family="monospace">O₂</text>
+    <text x="248" y="30" fill="#8FA3B0" font-size="10" font-family="sans-serif">화합물</text>
+    <text x="90" y="122" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">원소</text>
+    <text x="230" y="122" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">원소</text>
+  </svg>`,
+  def:'원소는 더 이상 다른 물질로 분해되지 않는 기본 성분이에요.',
+  txt:'물은 전기를 흘리자 수소와 산소로 나뉘었어요. 분해되었으니 물은 원소가 아니라 <b>화합물</b>입니다. 반대로 수소와 산소는 어떤 방법으로도 더 나뉘지 않으니 <b>원소</b>예요.',
+  link:'<b>실험 연결</b> — 한 물질(물)에서 성질이 완전히 다른 두 기체가 나온 것이 바로 물이 화합물이라는 증거예요.',
+  more:'물은 화학식으로 H₂O라고 씁니다. 수소 원소 H 두 개와 산소 원소 O 한 개가 결합했다는 뜻이에요.'},
+
+ {id:'c-elyte', n:2, t:'왜 전해질을 넣을까',
+  fig:`<svg viewBox="0 0 320 128" role="img" aria-label="순수한 물과 전해질 수용액의 전류 비교">
+    <path d="M30 34v56a10 10 0 0 0 10 10h64a10 10 0 0 0 10-10V34" fill="#0D2634" stroke="#8FB6C6" stroke-width="1.6"/>
+    <path d="M186 34v56a10 10 0 0 0 10 10h64a10 10 0 0 0 10-10V34" fill="#0D2634" stroke="#8FB6C6" stroke-width="1.6"/>
+    <circle cx="72" cy="20" r="9" fill="none" stroke="#8FA3B0" stroke-width="1.6"/>
+    <circle cx="228" cy="20" r="9" fill="#7FD8EC"/>
+    <path d="M52 34v-8M92 34v-8M208 34v-8M248 34v-8" stroke="#B8763C" stroke-width="2.4"/>
+    <text x="72" y="118" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">순수한 물 — 흐르지 않음</text>
+    <text x="228" y="118" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">전해질 수용액 — 흐름</text>
+    <g fill="#7FD8EC"><circle cx="205" cy="62" r="3.4"/><circle cx="248" cy="76" r="3.4"/><circle cx="224" cy="86" r="3.4"/></g>
+    <g fill="#E8672E"><circle cx="222" cy="60" r="3.4"/><circle cx="204" cy="84" r="3.4"/><circle cx="246" cy="58" r="3.4"/></g>
+  </svg>`,
+  def:'전해질은 물에 녹아 이온으로 나뉘어 전류가 흐르게 하는 물질이에요.',
+  txt:'순수한 물에는 전기를 나를 이온이 거의 없어 전류가 통하지 않아요. 수산화 나트륨을 조금 녹이면 이온이 생겨 전류가 흐릅니다. <b>전해질 자체는 분해되지 않고 그대로 남아요.</b>',
+  link:'<b>실험 연결</b> — 1단계에서 “순수한 물”로 바꾸면 전원을 켜도 기포가 거의 생기지 않았죠. 그래서 전해질이 필요해요.',
+  more:'전해질로는 수산화 나트륨 대신 황산 나트륨을 쓰기도 해요. 소금물은 (+)극에서 염소 기체가 나와 이 실험에는 알맞지 않습니다.'},
+
+ {id:'c-ratio', n:3, t:'부피비가 2 : 1인 까닭',
+  fig:`<svg viewBox="0 0 320 128" role="img" aria-label="반응식 계수비와 부피비 비교">
+    <text x="160" y="26" fill="#8FB6C6" font-size="15" text-anchor="middle" font-family="monospace">2H₂O → 2H₂ + O₂</text>
+    <text x="118" y="44" fill="#7FD8EC" font-size="10" text-anchor="middle" font-family="sans-serif">계수 2</text>
+    <text x="212" y="44" fill="#E8672E" font-size="10" text-anchor="middle" font-family="sans-serif">계수 1</text>
+    <rect x="74" y="54" width="60" height="56" rx="6" fill="#7FD8EC" opacity=".85"/>
+    <rect x="186" y="82" width="60" height="28" rx="6" fill="#E8672E" opacity=".85"/>
+    <path d="M64 54v56M256 82v28" stroke="#8FA3B0" stroke-width="1.2"/>
+    <text x="104" y="124" fill="#7FD8EC" font-size="11" text-anchor="middle" font-family="monospace">2</text>
+    <text x="216" y="124" fill="#E8672E" font-size="11" text-anchor="middle" font-family="monospace">1</text>
+    <text x="160" y="90" fill="#8FA3B0" font-size="11" text-anchor="middle" font-family="sans-serif">:</text>
+  </svg>`,
+  def:'화학 반응식의 계수비가 곧 기체의 부피비예요.',
+  txt:'물 분자 2개가 분해되면 수소 분자 2개와 산소 분자 1개가 만들어져요. 같은 온도·압력에서 기체는 분자 수가 같으면 부피도 같으므로, 계수비 2 : 1이 그대로 <b>부피비 2 : 1</b>이 됩니다.',
+  link:'<b>실험 연결</b> — 6 V든 12 V든 부피비가 2 : 1로 같았죠. 전압은 속도만 바꿀 뿐, 분자가 쪼개지는 방식은 바꾸지 못해요.',
+  more:'실제로 재면 2.00보다 살짝 크게 나오기 쉬워요. 산소가 수소보다 물에 잘 녹아 (+)극 기체가 조금 덜 모이기 때문입니다.'},
+
+ {id:'c-gas', n:4, t:'수소와 산소의 성질',
+  fig:`<svg viewBox="0 0 320 128" role="img" aria-label="성냥불과 향불로 기체를 확인하는 그림">
+    <rect x="18" y="14" width="128" height="100" rx="10" fill="none" stroke="#7FD8EC" stroke-width="1.4"/>
+    <rect x="174" y="14" width="128" height="100" rx="10" fill="none" stroke="#E8672E" stroke-width="1.4"/>
+    <text x="82" y="34" fill="#7FD8EC" font-size="11" text-anchor="middle" font-family="sans-serif">수소 · 성냥불</text>
+    <text x="238" y="34" fill="#E8672E" font-size="11" text-anchor="middle" font-family="sans-serif">산소 · 꺼져가는 향불</text>
+    <circle cx="82" cy="70" r="20" fill="#7FD8EC" opacity=".28"/>
+    <circle cx="82" cy="70" r="11" fill="#F5C36B"/>
+    <path d="M82 44v-8M82 96v8M56 70h-8M108 70h8M64 52l-6-6M100 88l6 6M100 52l6-6M64 88l-6 6" stroke="#F5C36B" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="238" cy="70" r="20" fill="#E8672E" opacity=".26"/>
+    <circle cx="238" cy="70" r="8" fill="#E8672E"/>
+    <path d="M238 56c2-6 4-9 2-14M232 58c-2-5-3-8-1-12" stroke="#F5A54B" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <text x="82" y="106" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">퍽! — 가연성</text>
+    <text x="238" y="106" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">활활 — 조연성</text>
+  </svg>`,
+  def:'수소는 스스로 타고, 산소는 다른 물질이 타도록 돕습니다.',
+  txt:'성냥불을 (−)극 기체에 대면 “퍽” 소리를 내며 순간 타요 — <b>가연성</b>. 꺼져 가는 향불을 (+)극 기체에 넣으면 불씨가 다시 살아나요 — <b>조연성</b>. 두 기체의 성질이 이렇게 다르니 같은 물질일 수 없어요.',
+  link:'<b>실험 연결</b> — 2단계에서 성냥불이 퍽 소리를 낸 쪽이 수소, 향불이 되살아난 쪽이 산소였어요.',
+  more:'수소를 향불로, 산소를 성냥불로 확인하면 성질이 뚜렷하게 드러나지 않아요. 기체마다 알맞은 확인 방법이 따로 있습니다.'},
+
+ {id:'c-mass', n:5, t:'질량비 1 : 8',
+  fig:`<svg viewBox="0 0 320 128" role="img" aria-label="부피비 2대1이 질량비 1대8로 바뀌는 그림">
+    <text x="72" y="18" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">부피</text>
+    <rect x="46" y="26" width="24" height="52" rx="4" fill="#7FD8EC" opacity=".85"/>
+    <rect x="82" y="52" width="24" height="26" rx="4" fill="#E8672E" opacity=".85"/>
+    <text x="76" y="94" fill="#8FA3B0" font-size="11" text-anchor="middle" font-family="monospace">2 : 1</text>
+    <path d="M128 52h44" stroke="#8FA3B0" stroke-width="1.6"/>
+    <path d="M166 46l8 6-8 6" fill="#8FA3B0"/>
+    <text x="150" y="40" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">× 밀도</text>
+    <text x="150" y="72" fill="#8FA3B0" font-size="9" text-anchor="middle" font-family="monospace">1:16</text>
+    <text x="248" y="18" fill="#8FA3B0" font-size="10" text-anchor="middle" font-family="sans-serif">질량</text>
+    <rect x="216" y="72" width="24" height="6" rx="3" fill="#7FD8EC" opacity=".85"/>
+    <rect x="252" y="30" width="24" height="48" rx="4" fill="#E8672E" opacity=".85"/>
+    <text x="248" y="94" fill="#8FA3B0" font-size="11" text-anchor="middle" font-family="monospace">1 : 8</text>
+    <path d="M40 78h248" stroke="#8FA3B0" stroke-width="1" opacity=".5"/>
+  </svg>`,
+  def:'부피는 수소가 2배지만, 질량은 산소가 8배예요.',
+  txt:'같은 부피라도 기체마다 무게가 달라요. 산소는 수소보다 <b>16배</b> 무겁습니다. 수소의 부피가 2배여도 2 ÷ 16 = 1/8 이므로, 질량비는 <b>수소 : 산소 = 1 : 8</b>이 돼요.',
+  link:'<b>실험 연결</b> — 3단계에서 내가 잰 부피에 밀도를 곱했더니 8에 가까운 값이 나왔죠. 언제 실험해도 같은 값이 나옵니다.',
+  more:'물 9 g을 분해하면 수소 1 g과 산소 8 g이 나와요. 화합물을 이루는 원소의 질량비가 늘 일정한 것을 <b>일정 성분비 법칙</b>이라 하고, 중3에서 자세히 배웁니다.<br><br>전극에서 실제로 일어나는 반응은 이렇습니다. 수산화 나트륨 수용액은 염기성이라 (+)극에서 OH⁻가 반응해요.<br><span class="fx">(−)극  2H₂O + 2e⁻ → H₂↑ + 2OH⁻<br>(+)극  4OH⁻ → O₂↑ + 2H₂O + 4e⁻</span>'}
+];
+const Theory={
+  built:false, lastFocus:null, fromQuiz:false,
+  build(){
+    if(Theory.built)return;
+    UI.el('dr-chips').innerHTML=CARDS.map(c=>
+      `<button onclick="Theory.jump('${c.id}')">${c.n}. ${c.t}</button>`).join('');
+    UI.el('dr-body').innerHTML=CARDS.map(c=>`
+      <article class="ccard" id="${c.id}">
+        <h4><span class="c">${c.n}</span>${c.t}</h4>
+        <div class="fig">${c.fig}</div>
+        <p class="def">${c.def}</p>
+        <p>${c.txt}</p>
+        <p class="link">🔬 ${c.link}</p>
+        <details><summary>더 알아보기</summary><p>${c.more}</p></details>
+      </article>`).join('');
+    Theory.built=true;
+  },
+  open(cardId,fromQuiz){
+    Theory.build();
+    Theory.lastFocus=document.activeElement;
+    Theory.fromQuiz=!!fromQuiz;
+    UI.el('b-theory').classList.remove('pulse');
+    const d=UI.el('drawer');
+    d.classList.add('on');d.removeAttribute('aria-hidden');
+    UI.el('scrim').classList.add('on');
+    Sfx.play('tap');
+    if(cardId){
+      const el=UI.el(cardId);
+      if(el)setTimeout(()=>el.scrollIntoView({block:'start',behavior:App.reduced?'auto':'smooth'}),70);
+      [...UI.el('dr-chips').children].forEach(b=>
+        b.setAttribute('aria-current',String(b.getAttribute('onclick').includes(cardId))));
+    }else{ UI.el('dr-body').scrollTop=0; }
+    setTimeout(()=>{const b=d.querySelector('.dt .ico');if(b)b.focus();},80);
+  },
+  jump(id){
+    const el=UI.el(id);if(el)el.scrollIntoView({block:'start',behavior:App.reduced?'auto':'smooth'});
+    [...UI.el('dr-chips').children].forEach(b=>
+      b.setAttribute('aria-current',String(b.getAttribute('onclick').includes(id))));
+  },
+  close(silent){
+    const d=UI.el('drawer');
+    if(!d.classList.contains('on'))return;
+    d.classList.remove('on');d.setAttribute('aria-hidden','true');
+    if(!silent)UI.el('scrim').classList.remove('on');
+    if(Theory.lastFocus&&Theory.lastFocus.focus)Theory.lastFocus.focus();
+  },
+  swipe(){
+    const d=UI.el('drawer');let y0=null;
+    d.addEventListener('pointerdown',e=>{
+      if(window.innerWidth>900||!e.target.closest('.dh')||e.target.closest('button'))return;
+      y0=e.clientY;
+    });
+    d.addEventListener('pointermove',e=>{
+      if(y0===null)return;const dy=e.clientY-y0;
+      if(dy>0){e.preventDefault();d.style.transform=`translateY(${dy}px)`;}
+    });
+    const end=e=>{ if(y0===null)return;const dy=e.clientY-y0;y0=null;d.style.transform='';
+      if(dy>90)Theory.close(); };
+    d.addEventListener('pointerup',end);
+    d.addEventListener('pointercancel',()=>{y0=null;d.style.transform='';});
+  }
+};
+
+/* ==================== 학번·이름 / 안전 ==================== */
+const Gate={
+  open(){ UI.el('g-id').value=App.id;UI.el('g-name').value=App.name;UI.modal('m-gate'); },
+  save(){
+    App.id=UI.el('g-id').value.trim();App.name=UI.el('g-name').value.trim();
+    UI.el('who-t').textContent=App.id||'학번 입력';
+    UI.el('who-n').textContent=App.name?' · '+App.name:'';
+    UI.closeAll();Sfx.play('ok');Report.check();
+  }
+};
+const Safety={
+  chk:[],
+  render(){
+    UI.el('safe-list').innerHTML=SAFE.map((s,i)=>
+      `<button class="chk" aria-pressed="${!!Safety.chk[i]}" onclick="Safety.tick(${i})">
+        <span class="bx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <span>${s}</span></button>`).join('');
+    UI.el('safe-go').disabled=Safety.chk.filter(Boolean).length<SAFE.length;
+  },
+  tick(i){ Safety.chk[i]=!Safety.chk[i];Sfx.play('tap');Safety.render(); },
+  done(){ App.safeOK=true;UI.closeAll();Sfx.play('ok');UI.toast('안전 확인 완료. 실험을 시작해요.'); }
+};
+
+/* ==================== 단계 진행 ==================== */
+const Flow={
+  /* 단계 잠금 없음 — 어느 단계든 자유롭게 오간다.
+     체크 표시는 잠금이 아니라 '어디까지 했는지' 알려 주는 진행 표시다. */
+  done(n){
+    if(n===1)return !!App.row;
+    if(n===2)return !!(App.tested.h2&&App.tested.o2);
+    if(n===3)return App.massAns!==null;
+    if(n===4)return Quiz.answered()>=QUIZ.length;
+    if(n===5)return Report.ok();
+    return false;
+  },
+  go(n){
+    n=clamp(n,1,STEPS.length);
+    // 전기분해 화면을 떠나면 전원을 내린다 — 1단계 전원 상태가 다른 단계를 막지 않도록
+    if(n!==1&&Lab.power){
+      Lab.power=false;
+      if(n===2)UI.toast('전원을 끄고 기체를 확인해요.');
+    }
+    App.step=n;
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',+v.dataset.v===n));
+    if(n===2)Test.sync();
+    if(n===3)Mass.render();
+    if(n===4)Quiz.render();
+    if(n===5){Report.summary();Report.check();}
+    Flow.render();Sfx.play('tap');
+    CV.fitAll();UI.segSync();
+    setTimeout(()=>{CV.fitAll();Draw.all();UI.segSync();},60);
+  },
+  render(){
+    UI.el('steps').innerHTML=STEPS.map(s=>{
+      const done=Flow.done(s.n);
+      return `<button class="step" data-done="${done?1:0}"
+          ${App.step===s.n?'aria-current="step"':''} onclick="Flow.go(${s.n})">
+          <n>${done?'✓':s.n}</n><span class="lb">${s.label}</span></button>`;
+    }).join('')+`<span class="spacer"></span><span class="mini" id="step-hint"></span>`;
+    const st=STEPS[App.step-1];
+    UI.el('c-a').textContent=`${st.n}단계`;
+    UI.el('c-b').textContent=st.label;
+    UI.el('c-prev').disabled=App.step<=1;
+    UI.el('c-next').disabled=App.step>=STEPS.length;
+    const n=STEPS.filter(s=>Flow.done(s.n)).length;
+    const hint=UI.el('step-hint');
+    if(hint)hint.textContent=n?`${n}단계 마침`:'';
+    Flow.ctrl();
+  },
+  ctrl(){
+    const b=UI.el('c-main');
+    b.style.display='';b.disabled=false;b.className='btn acc';
+    if(App.step===1){
+      b.textContent=Lab.power?'전원 끄기':'전원 켜기';
+      b.onclick=()=>Lab.togglePower();
+      b.className=Lab.power?'btn line':'btn acc';
+    }else if(App.step===2){
+      b.textContent='질량 환산하기';b.onclick=()=>Flow.go(3);b.className='btn acc';
+    }else if(App.step===3){
+      b.textContent='확인 퀴즈 풀기';b.onclick=()=>Flow.go(4);b.className='btn acc';
+    }else if(App.step===4){
+      b.textContent='탐구 보고서 쓰기';b.onclick=()=>Flow.go(5);b.className='btn acc';
+    }else{
+      b.textContent='결과 PDF 저장';b.onclick=()=>Report.pdf();
+      b.disabled=!Report.ok();b.className='btn pri';
+    }
+  }
+};
+
+/* ==================== 캔버스 직접 조작 ==================== */
+function bindCanvas(){
+  /* ── 1단계: 전원 장치를 화면에서 누른다 ── */
+  const c1=CV.reg['cv1'];
+  if(c1){
+    c1.addEventListener('pointerdown',e=>{
+      const p=CV.toDesign('cv1',e.clientX,e.clientY,G.W,G.H);if(!p)return;
+      const h=Lab.hit(p);if(!h)return;
+      e.preventDefault();
+      if(h==='power')Lab.togglePower();
+      else if(h==='vup')Lab.stepVolt(1);
+      else Lab.stepVolt(-1);
+    });
+    c1.addEventListener('pointermove',e=>{
+      const p=CV.toDesign('cv1',e.clientX,e.clientY,G.W,G.H);
+      c1.style.cursor=(p&&Lab.hit(p))?'pointer':'default';
+    });
+    c1.addEventListener('pointerleave',()=>{c1.style.cursor='default';});
+  }
+
+  /* ── 2단계: 고무마개를 끌어 열고, 성냥·향불을 집어 관 입구까지 끌어다 댄다 ── */
+  const c2=CV.reg['cv2'];
+  if(c2){
+    const at=e=>CV.toDesign('cv2',e.clientX,e.clientY,G2.W,G2.H);
+    c2.addEventListener('pointerdown',e=>{
+      if(!Test.pick(at(e),c2,e))return;
+      e.preventDefault();
+    });
+    c2.addEventListener('pointermove',e=>{
+      const p=at(e);
+      if(Test.phase==='cork'||Test.phase==='drag'){
+        e.preventDefault();Test.move(p);
+      }else if(Test.phase==='idle'){
+        c2.style.cursor=(Test.hitCock(p)||Test.hitTool(p))?'grab':'default';
+      }
+    });
+    /* 캡처 중에는 pointerleave 가 엉뚱하게 끊을 수 있어 쓰지 않는다 */
+    const end=()=>{
+      if(Test.phase!=='cork'&&Test.phase!=='drag')return;
+      c2.style.cursor='default';Test.drop();
+    };
+    c2.addEventListener('pointerup',end);
+    c2.addEventListener('pointercancel',end);
+    c2.addEventListener('lostpointercapture',end);
+  }
+}
+
+/* ==================== 시작 ==================== */
+function boot(){
+  const p=App.loadPref();
+  if(p){ App.theme=p.t==='light'?'light':'dark'; App.sound=!!p.s; }
+  document.documentElement.dataset.theme=App.theme;
+  UI.el('b-sound').classList.toggle('on',App.sound);
+  UI.el('mute-x').style.display=App.sound?'none':'';
+  C.read();
+
+  ['cv1','cv2','cv3'].forEach(id=>CV.init(id));
+  bindCanvas();
+  Step1.volts();Step1.poe();Step1.table();Step1.sync();
+  Test.poe();Test.sync();
+  Report.check();
+  Theory.build();Theory.swipe();
+  Safety.render();
+  document.querySelectorAll('.side-scroll').forEach(b=>UI.scrollCue(b));
+  document.querySelectorAll('.seg').forEach(s=>UI.segThumb(s));
+  Flow.go(1);
+  setTimeout(()=>Chart2.init(),120);
+  setTimeout(()=>UI.modal('m-safe'),420);
+
+  // 이론 버튼 강조는 한 번만
+  setTimeout(()=>UI.el('b-theory').classList.remove('pulse'),8000);
+
+  // 모바일 세로 시트 손잡이 — 가로 모드에서는 좌우 배치라 접지 않는다
+  const sheetMode=matchMedia('(max-width:900px) and (orientation:portrait)');
+  document.querySelectorAll('.side').forEach(sd=>{
+    sd.addEventListener('click',e=>{
+      if(e.target!==sd||!sheetMode.matches)return;
+      if(e.offsetY<20){ sd.classList.toggle('min');CV.fitAll();setTimeout(()=>{CV.fitAll();Draw.all();},60); }
+    });
+  });
+  sheetMode.addEventListener('change',()=>{
+    document.querySelectorAll('.side.min').forEach(s=>s.classList.remove('min'));
+    CV.fitAll();setTimeout(()=>{CV.fitAll();Draw.all();},60);
+  });
+
+  // 첫 제스처에서 오디오 잠금 해제
+  const kick=()=>{ Sfx.ensure();
+    document.removeEventListener('pointerdown',kick);document.removeEventListener('keydown',kick); };
+  document.addEventListener('pointerdown',kick,{passive:true});
+  document.addEventListener('keydown',kick);
+
+  window.addEventListener('resize',()=>{CV.fitAll();Draw.all();});
+  window.addEventListener('orientationchange',()=>setTimeout(()=>{CV.fitAll();Draw.all();},140));
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden){CV.fitAll();Draw.all();}
+    if(Sfx.ctx){ document.hidden?Sfx.ctx.suspend():Sfx.ctx.resume(); }
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){UI.closeAll();return;}
+    if(e.altKey&&e.key==='ArrowRight'){Flow.go(App.step+1);e.preventDefault();return;}
+    if(e.altKey&&e.key==='ArrowLeft'){Flow.go(App.step-1);e.preventDefault();return;}
+    if(e.code==='Space'&&App.step===1&&!/INPUT|TEXTAREA|BUTTON/.test(document.activeElement.tagName)){
+      Lab.togglePower();e.preventDefault();
+    }
+  });
+  window.addEventListener('beforeunload',e=>{
+    if(App.row||Quiz.answered()){e.preventDefault();e.returnValue='';}
+  });
+  /* 학교 망에서 CDN 이 막히면 <script> 로드가 실패한다. 그건 실험 진행과 상관없으므로
+     놀랄 만한 문구를 띄우지 않는다 — 그래프·저장 기능만 조용히 접는다. */
+  window.addEventListener('error',e=>{
+    const t=e&&e.target;
+    if(t&&t!==window&&/^(SCRIPT|LINK|IMG)$/.test(t.tagName||''))return;
+    try{UI.toast('문제가 생겨 잠깐 멈췄어요. 실험은 계속할 수 있어요.');}catch(_){}
+  },true);
+  window.addEventListener('unhandledrejection',()=>{try{UI.toast('처리 중 문제가 있었어요. 실험은 계속할 수 있어요.');}catch(_){}});
+
+  requestAnimationFrame(loop);
+}
+
+let _last=0, _sync=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  const now=ts/1000;
+  let dt=Math.min(1/30,Math.max(0,now-(_last||now)));
+  _last=now;
+  if(document.hidden)return;
+  Lab.vt=(Lab.vt||0)+dt;
+  if(App.step===1){
+    Lab.update(dt*Lab.speed);
+    _sync+=dt;
+    if(_sync>=0.12){_sync=0;Step1.sync();}
+    Draw.s1();
+  }else if(App.step===2){
+    Test.step(dt);
+    Draw.s2();
+  }else if(App.step===3){
+    Draw.s3();
+  }
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
+else boot();
+</script>
+</body>
+</html>
