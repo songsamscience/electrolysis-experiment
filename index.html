@@ -343,6 +343,10 @@ a.ico{text-decoration:none}
 .res .g{width:18px;height:18px;flex:none;margin-top:1px}
 .res.ok .g{color:var(--ok)} .res.no .g{color:var(--o2-tx)}
 
+/* 2단계 되짚기 문항 — 확인이 끝난 관에만 나오므로, 비었을 때는 자리를 차지하지 않는다 */
+#chk2{display:flex;flex-direction:column;gap:var(--s2)}
+#chk2:empty{display:none}
+
 /* ---- 잠금 안내 ---- */
 .lock{display:flex;gap:var(--s2);font-size:13px;line-height:1.5;padding:var(--s3);
   border-radius:var(--r-s);background:var(--tint-warn);color:var(--txt-2)}
@@ -777,6 +781,7 @@ a.ico{text-decoration:none}
         <div class="tools" id="tools2"></div>
       </div>
       <div id="res2"></div>
+      <div id="chk2"></div>
       <div class="sdiv" aria-hidden="true">관찰표</div>
       <div id="mat2"></div>
     </div>
@@ -981,7 +986,9 @@ const TERMS={
 const App={
   step:1, id:'', name:'', sound:false, theme:'dark',
   safeOK:false,
-  pred1:null, pred2:null,           // POE 예측
+  pred1:null,                       // POE 예측
+  pred2:{h2:null,o2:null},          // 2단계 예측 — 관마다 따로 기록한다
+  chk2:{h2:null,o2:null},           // 2단계 되짚기 — 관마다 따로 기록한다
   obs1:null,                        // 변인 통제 관찰 답
   row:null,                         // 측정 기록 — 1회 {t,h2,o2,volt}
   usedVolt:{},                      // 사용해 본 전압 종류
@@ -1807,15 +1814,51 @@ const Draw={
     }
   },
 
-  /* ---------- 극 이름표 ---------- */
+  /* ---------- 극 이름표 ----------
+     관 바깥 여백에 이름표를 두고, 관 안의 백금 전극까지 지시선으로 잇는다.
+     예전에는 전원 장치 위(G.TB+56)에 얹혀 스위치·전압 버튼과 겹쳤다.
+     세로 위치 LY 는 전극 한가운데이면서 눈금 숫자 40(y≈337)·50(y=396) 사이의 빈 자리다. */
   poles(x,ts){
     if(ts<0.42)return;
-    [[G.LC,'(−)극','수소 H₂','h2'],[G.RC,'(+)극','산소 O₂','o2']].forEach(([cx,p,g,key])=>{
-      x.textAlign='center';
-      x.font='600 13px Pretendard,sans-serif';x.fillStyle=C.v[key];
-      x.fillText(p,cx,G.TB+56);
-      x.font='500 11px Pretendard,sans-serif';x.fillStyle=C.a(key,.68);
-      x.fillText(g,cx,G.TB+72);
+    const LY=G.TB-30;
+    /* dir: 지시선이 나아가는 방향 (왼쪽 이름표는 오른쪽으로, 오른쪽 이름표는 왼쪽으로)
+       tx : 글자가 붙는 자리 / sx: 지시선 시작 / ex: 화살촉이 닿는 전극 면 */
+    [[G.LC,'(−)극','수소 H₂','h2', 1, 210, 218],
+     [G.RC,'(+)극','산소 O₂','o2',-1, 570, 562]].forEach(([cx,p,g,key,dir,tx,sx])=>{
+      const ex=cx-dir*6.5;                    // 전극 막대(폭 13)의 바깥쪽 면
+      x.save();
+      x.lineCap='round';x.lineJoin='round';
+      /* 지시선은 유리관 벽과 수용액 위를 지난다.
+         어두운 바탕 테두리를 먼저 깔아야 무엇에 겹쳐도 선이 읽힌다. */
+      const line=()=>{
+        x.beginPath();
+        x.moveTo(sx,LY);x.lineTo(ex-dir*7,LY);
+        x.stroke();
+      };
+      const head=()=>{
+        x.beginPath();
+        x.moveTo(ex,LY);
+        x.lineTo(ex-dir*9,LY-4.5);
+        x.lineTo(ex-dir*9,LY+4.5);
+        x.closePath();
+        x.fill();
+      };
+      x.strokeStyle=C.a('canvas-bg',.6);x.lineWidth=4.5;line();
+      x.fillStyle=C.a('canvas-bg',.6);
+      x.save();x.lineWidth=4.5;x.strokeStyle=C.a('canvas-bg',.6);head();x.stroke();x.restore();
+      x.strokeStyle=C.a(key,.92);x.lineWidth=1.8;line();
+      x.fillStyle=C.a(key,.92);head();
+      // 글자 쪽 끝점 — 지시선이 이름표에서 뻗어 나온 것임을 분명히 한다
+      x.beginPath();x.arc(sx,LY,2.2,0,6.284);x.fill();
+      x.restore();
+
+      x.save();
+      x.textAlign=dir>0?'right':'left';x.textBaseline='middle';
+      x.font='600 14px Pretendard,sans-serif';x.fillStyle=C.v[key];
+      x.fillText(p,tx,LY-9);
+      x.font='500 12px Pretendard,sans-serif';x.fillStyle=C.a(key,.68);
+      x.fillText(g,tx,LY+8);
+      x.restore();
     });
   },
 
@@ -2097,10 +2140,41 @@ const Chart2={
 };
 
 /* ==================== 2단계 · 기체 확인 ==================== */
+/* 예측 문항 — 관마다 따로 있다. 관을 바꾸면 그 관에 맞는 문항이 새로 나오고,
+   먼저 푼 관의 답은 그대로 남는다. */
 const POE2={
-  q:'<b>(−)극</b>에 모인 기체는 무엇일까요?',
-  o:['수소','산소','이산화 탄소','질소'], a:0,
-  why:'(−)극에서는 물이 전자를 얻어 <b>수소</b>가 생겨요. 수소는 스스로 잘 타는 가연성 기체라 성냥불을 대면 “퍽” 소리를 냅니다.'
+  h2:{
+    q:'<b>(−)극</b>에 모인 기체는 무엇일까요?',
+    o:['수소','산소','이산화 탄소','질소'], a:0,
+    why:'(−)극에서는 물이 전자를 얻어 <b>수소</b>가 생겨요. 수소는 스스로 잘 타는 가연성 기체라 성냥불을 대면 “퍽” 소리를 냅니다.'
+  },
+  o2:{
+    q:'<b>(+)극</b>에 모인 기체는 무엇일까요?',
+    o:['수소','산소','이산화 탄소','질소'], a:1,
+    why:'(+)극에서는 물이 전자를 잃어 <b>산소</b>가 생겨요. 산소는 스스로 타지는 않지만 다른 물질이 타는 것을 도와서, 꺼져 가는 향불을 넣으면 불씨가 되살아납니다.'
+  }
+};
+/* 되짚기 문항 — 그 관의 기체를 확인한 뒤에 나온다.
+   두 도구의 결과를 나란히 놓아야 성질에 이름을 붙일 수 있게 짰다. */
+const CHK2={
+  h2:{
+    title:'되짚어 보기',
+    q:'(−)극 기체에 <b>성냥불</b>을 댔더니 “퍽” 하고 탔고, <b>꺼져 가는 향불</b>을 넣었더니 불씨가 꺼졌어요. 두 결과를 함께 보면 수소는 어떤 기체인가요?',
+    o:['스스로 잘 타지만, 다른 물질이 타는 것을 돕지는 않는다',
+       '스스로 타지는 않지만, 다른 물질이 타는 것을 돕는다',
+       '스스로도 잘 타고, 다른 물질이 타는 것도 돕는다'], a:0,
+    why:'스스로 잘 타는 성질을 <b>가연성</b>이라고 해요. 향불이 꺼진 것은 관 안에 <b>산소가 없기</b> 때문이에요. 무엇이든 타려면 탈 물질과 산소가 함께 있어야 하거든요.',
+    lock:'💡 이 관에 <b>두 도구를 모두</b> 대 본 뒤에 답하면 차이가 더 잘 보여요.'
+  },
+  o2:{
+    title:'되짚어 보기',
+    q:'(+)극 기체에 <b>꺼져 가는 향불</b>을 넣었더니 불씨가 활활 되살아났고, <b>성냥불</b>은 더 밝게 타기만 했어요. 두 결과를 함께 보면 산소는 어떤 기체인가요?',
+    o:['스스로 타지는 않지만, 다른 물질이 타는 것을 돕는다',
+       '스스로 잘 타지만, 다른 물질이 타는 것을 돕지는 않는다',
+       '타지도 않고, 타는 것을 돕지도 않는다'], a:0,
+    why:'다른 물질이 잘 타도록 돕는 성질을 <b>조연성</b>이라고 해요. 산소 자신은 연료가 아니라서 “퍽” 소리는 나지 않고, 이미 타고 있던 불꽃만 더 세게 탑니다.',
+    lock:'💡 이 관에 <b>두 도구를 모두</b> 대 본 뒤에 답하면 차이가 더 잘 보여요.'
+  }
 };
 const TOOLS=[
   {id:'match', t:'성냥불',        d:'화면에서 끌어다 대거나, 눌러도 돼요'},
@@ -2202,21 +2276,62 @@ const Test={
     return {x:r.x+Math.cos(r.rot)*r.len*0.5, y:r.y+Math.sin(r.rot)*r.len*0.5};
   },
 
+  /* 지금 고른 관의 예측 문항.
+     sync() 에서도 부르므로, 내용이 그대로일 때는 다시 그리지 않는다
+     — 누르는 사이에 버튼이 갈리면 클릭이 성립하지 않기 때문이다. */
   poe(){
-    const p=App.pred2;
-    let h=`<div class="poe"><div class="q">${POE2.q}</div><div class="opts">`;
-    h+=POE2.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
+    const box=UI.el('poe2');if(!box)return;
+    const tb=Test.tube, P=POE2[tb], p=App.pred2[tb];
+    const sig=tb+'|'+p;
+    if(box._sig===sig)return;
+    box._sig=sig;
+    let h=`<div class="poe"><div class="q">${P.q}</div><div class="opts">`;
+    h+=P.o.map((o,i)=>`<button aria-pressed="${p===i}" ${p!==null?'disabled':''}
       onclick="Test.predict(${i})"><span class="mk"></span>${o}</button>`).join('');
     h+='</div>';
     if(p!==null){
-      const ok=p===POE2.a;
+      const ok=p===P.a;
       h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
-        ok?'예측한 대로예요.':`예측은 <b>${POE2.o[p]}</b>였어요. 실제로는 <b>수소</b>랍니다.`}<br>${POE2.why}</span></div>`;
+        ok?'예측한 대로예요.':`예측은 <b>${P.o[p]}</b>였어요. 실제로는 <b>${P.o[P.a]}</b>랍니다.`}<br>${P.why}</span></div>`;
     }
     h+='</div>';
-    UI.el('poe2').innerHTML=h;
+    box.innerHTML=h;
   },
-  predict(i){ App.pred2=i;Sfx.play('tap');Test.poe();Test.sync(); },
+  predict(i){
+    App.pred2[Test.tube]=i;Sfx.play('tap');Test.poe();Test.sync();
+    UI.toast('예측을 기록했어요. 이제 직접 확인해 볼까요?');
+  },
+  /* 그 관의 기체를 확인한 뒤에만 나오는 되짚기 문항 */
+  chk(){
+    const box=UI.el('chk2');if(!box)return;
+    const tb=Test.tube, Q=CHK2[tb], a=App.chk2[tb];
+    const on=!!App.tested[tb];
+    const both=!!(App.tried[tb+':match']&&App.tried[tb+':ember']);
+    const sig=tb+'|'+(on?1:0)+'|'+(both?1:0)+'|'+a;
+    if(box._sig===sig)return;
+    box._sig=sig;
+    if(!on){ box.innerHTML=''; return; }
+    // 잠그지 않는다. 아직 한 도구만 대 봤다면 나머지도 해 보라고 권하기만 한다.
+    const tip=(a===null&&!both)?`<div class="lock"><span>${Q.lock}</span></div>`:'';
+    let h=`<div class="poe"><div class="q">${Q.q}</div><div class="opts">`;
+    h+=Q.o.map((o,i)=>`<button aria-pressed="${a===i}" ${a!==null?'disabled':''}
+      onclick="Test.answerChk(${i})"><span class="mk"></span>${o}</button>`).join('');
+    h+='</div>';
+    if(a!==null){
+      const ok=a===Q.a;
+      h+=`<div class="res ${ok?'ok':'no'}">${Step1.icon(ok)}<span>${
+        ok?'맞았어요.':`다시 살펴볼까요? 정답은 <b>${Q.o[Q.a]}</b>예요.`}<br>${Q.why}</span></div>`;
+    }
+    h+='</div>';
+    box.innerHTML=`<div class="sdiv" aria-hidden="true">${Q.title}</div>${tip}${h}`;
+  },
+  answerChk(i){
+    const tb=Test.tube;
+    App.chk2[tb]=i;
+    Sfx.play(i===CHK2[tb].a?'ok':'tap');
+    Test.chk();
+    UI.live(i===CHK2[tb].a?'맞았어요.':`정답은 ${CHK2[tb].o[CHK2[tb].a]} 입니다.`);
+  },
   pickTube(t){
     if(Test.tube===t)return;
     Test.tube=t;Test.last=null;Test.phase='idle';Test.t=0;Test.hold=null;
@@ -2391,6 +2506,7 @@ const Test={
   sync(){
     UI.el('seg-tube').querySelectorAll('button').forEach((b,i)=>
       b.setAttribute('aria-pressed',String((i?'o2':'h2')===Test.tube)));
+    Test.poe();Test.chk();      // 고른 관에 맞는 문항으로 갈아 끼운다
     const opened=Test.open[Test.tube], busy=Test.phase!=='idle';
     let h='';
     if(!opened){
@@ -3303,6 +3419,14 @@ const Report={
           ? '성질을 견주어 본 탐구'
           : `확인된 기체 <b>${t.tube==='h2'?'수소 H₂':'산소 O₂'}</b>`}</span></div></div>`;
     });
+    ['h2','o2'].forEach(tb=>{
+      const a=App.chk2[tb];if(a===null)return;
+      const Q=CHK2[tb];
+      h+=`<div class="sumcard"><div class="h"><span>2단계</span><span>·</span>
+        <span>${tb==='h2'?'(−)극':'(+)극'} 되짚기</span></div>
+        <div class="m">${esc(Q.o[a])}</div>
+        <div class="d"><span>${a===Q.a?'맞았어요':'다시 살펴봤어요'}</span></div></div>`;
+    });
     if(App.massAns!==null){
       h+=`<div class="sumcard"><div class="h"><span>3단계</span><span>·</span><span>질량 환산</span></div>
         <div class="m">질량비 1 : ${fmt(d.ratio,1)}</div>
@@ -3329,6 +3453,12 @@ const Report={
       <td>${t.tool==='match'?'성냥불':'꺼져가는 향불'} — ${esc(t.text)}${t.ok===false
         ? ' <i>(성질을 견주어 본 탐구)</i>'
         : ` → <b>${t.tube==='h2'?'수소 H₂':'산소 O₂'}</b>`}</td></tr>`).join('');
+    const chks=['h2','o2'].map(tb=>{
+      const a=App.chk2[tb];if(a===null)return '';
+      const Q=CHK2[tb];
+      return `<tr><th style="width:110px">${tb==='h2'?'(−)극':'(+)극'} 되짚기</th>
+        <td>${esc(Q.o[a])}${a===Q.a?' <b>(맞음)</b>':' <i>(다시 살펴봄)</i>'}</td></tr>`;
+    }).join('');
     UI.el('sheet').innerHTML=`
       <h1>물의 전기분해 탐구 보고서</h1>
       <div class="meta">
